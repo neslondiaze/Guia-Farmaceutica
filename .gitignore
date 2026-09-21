@@ -46,6 +46,10 @@ logs/
 *.sqlite
 *.sqlite3
 
+# Artefacto de reanudacion del enriquecimiento clinico (duplica lo volcado a la
+# BD; enriquecer_clinico.py lo recrea solo si se borra)
+datos_clinicos.jsonl
+
 # --- Datos -----------------------------------------------------------------
 # El dataset JSON SI se versiona (3.75 MB) para poder reconstruir la base de
 # datos sin volver a scrapear. Si prefieres no versionarlo, descomenta la
