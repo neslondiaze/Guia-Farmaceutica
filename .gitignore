@@ -1,0 +1,75 @@
+# ---------------------------------------------------------------------------
+# Guia-Farmaceutica - archivos que git debe ignorar
+#
+# SI se versiona (codigo fuente y datos de trabajo):
+#     scraper_vademecum.py, vademecum_ve.py, crear_bd_vademecum.py
+#     medicamentos_vademecum_venezuela.json      (dataset del scraping)
+#     requirements.txt, .gitignore, README, ...
+#
+# NO se versiona: entornos virtuales, cache HTTP, logs y binarios regenerables
+# (la base de datos se reconstruye en ~3 s desde el JSON con:
+#      python crear_bd_vademecum.py --reemplazar
+# ---------------------------------------------------------------------------
+
+# --- Entornos virtuales ----------------------------------------------------
+venv/
+.venv/
+env/
+ENV/
+virtualenv/
+.conda/
+
+# --- Artefactos de Python --------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# --- Cache HTTP del scraper (vademecum_ve.py: CACHE_DIR = "cache_vademecum") -
+cache_vademecum/
+cache/
+
+# --- Logs (vademecum_ve.py: LOG_FILE = "logs/recoleccion_vademecum.log") ----
+logs/
+*.log
+
+# --- Bases de datos generadas (regenerables desde el JSON) ------------------
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# --- Datos -----------------------------------------------------------------
+# El dataset JSON SI se versiona (3.75 MB) para poder reconstruir la base de
+# datos sin volver a scrapear. Si prefieres no versionarlo, descomenta la
+# ultima linea de este bloque.
+# medicamentos_vademecum_venezuela.json
+
+# Copias, respaldos y volcados temporales
+*.bak
+*.tmp
+*.old
+*.orig
+*.rej
+*.dump
+
+# --- Secretos y configuracion local ----------------------------------------
+.env
+.env.*
+!.env.example
+*.local
+
+# --- Editores y sistema operativo ------------------------------------------
+# Si prefieres compartir la configuracion de VS Code, borra la linea ".vscode/"
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
