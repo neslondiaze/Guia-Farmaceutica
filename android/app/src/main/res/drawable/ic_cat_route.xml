@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Icono de Inyectadora / Jeringa -->
+    <path
+        android:fillColor="@color/azul_clinico"
+        android:pathData="M19,3L17.5,4.5L18.5,5.5L11,13L9.5,11.5L8.5,12.5L10.5,14.5L7,18H4V20H7L10.5,16.5L12.5,18.5L13.5,17.5L12,16L19.5,8.5L20.5,9.5L22,8L19,5L20,4L19,3Z M7,19L5,19V18H6L7,19Z M17,8L10,15L9,14L16,7L17,8Z" />
+</vector>

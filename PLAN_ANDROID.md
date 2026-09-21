@@ -8,10 +8,10 @@
 
 Construir la APK **Guia Farmaceutica**: guía offline de medicamentos de
 Venezuela consumiendo los artefactos de este repositorio
-(`medicamentos_vademecum_venezuela.db`, `medicamentos_vademecum_venezuela.json`,
+(`medicamentos_guia_venezuela.db`, `medicamentos_guia_venezuela.json`,
 `README.md`, `clasificacion_medicamentos.md`).
 
-**Fuente de verdad de datos**: `medicamentos_vademecum_venezuela.db`
+**Fuente de verdad de datos**: `medicamentos_guia_venezuela.db`
 (7057 medicamentos · 1270 monografías · 48 vías · 107 formas · 2033 códigos ATC).
 
 **Alcance v1.0 (MVP)**: catálogo offline navegable + buscador + ficha clínica
@@ -25,8 +25,8 @@ dispositivo Android 7.0, abre sin red y muestra los 7057 medicamentos.
 
 | Origen (repo) | Contenido | Uso en la app |
 |---|---|---|
-| `medicamentos_vademecum_venezuela.db` | Tablas `medicamentos`, `laboratorios`, `paises`, `medicamento_clinico`, `vias`, `formas`, `atc`, `monografias`, `medicamentos_fts`, `monografias_fts`; vistas `v_medicamentos`, `v_clinico`, `v_resumen_*` | **BD semilla** copiada a almacenamiento interno en el primer arranque |
-| `medicamentos_vademecum_venezuela.json` | Dataset crudo (7057 registros) | Respaldo/alternativa de siembra si la BD cambia de esquema |
+| `medicamentos_guia_venezuela.db` | Tablas `medicamentos`, `laboratorios`, `paises`, `medicamento_clinico`, `vias`, `formas`, `atc`, `monografias`, `medicamentos_fts`, `monografias_fts`; vistas `v_medicamentos`, `v_clinico`, `v_resumen_*` | **BD semilla** copiada a almacenamiento interno en el primer arranque |
+| `medicamentos_guia_venezuela.json` | Dataset crudo (7057 registros) | Respaldo/alternativa de siembra si la BD cambia de esquema |
 | `clasificacion_medicamentos.md` | Los 9 ejes de clasificación + SQL de ejemplo | Especificación funcional de filtros y ficha (ver §5) |
 | `README.md` | Esquema, vistas y consultas ya validadas | Referencia de queries a portar a DAO |
 
@@ -49,7 +49,7 @@ principios activos) · **vía** (48) · **forma** (107) · **laboratorio** (136)
 
 ```
 app/src/main/
-  assets/databases/medicamentos_vademecum_venezuela.db  # BD semilla
+  assets/databases/medicamentos_guia_venezuela.db  # BD semilla
   java/ve/guiafarmaceutica/app/
     data/        # AppDatabase, entidades Room, DAOs, SeedManager
     repository/  # MedicamentoRepository, MonografiaRepository
@@ -170,5 +170,5 @@ app/src/main/
    normalizar en la capa DAO con `TRIM(nombre, ' ,')` o vista de limpieza.
 5. **Fotos con Glide**: la BD no trae imágenes; Glide cubre placeholders y las
    fotos que el usuario añada a favoritos.
-6. **Los datos clínicos son informativos** (© Vidal Vademecum Spain): mostrar
+6. **Los datos clínicos son informativos** (© Vidal guia Spain): mostrar
    aviso de "uso profesional sanitario" en la ficha, coherente con la fuente.

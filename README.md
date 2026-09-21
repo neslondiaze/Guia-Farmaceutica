@@ -1,7 +1,7 @@
 # Guía Farmacéutica — Venezuela
 
 Conjunto de herramientas para **recolectar el catálogo de medicamentos de
-Venezuela** publicado en [vademecum.es](https://www.vademecum.es/venezuela),
+Venezuela** publicado en [guia.es](https://www.guia.es/venezuela),
 almacenarlo como dataset JSON y cargarlo en una **base de datos SQLite**
 consultable (con búsqueda de texto completo FTS5 y clasificación clínica ATC).
 
@@ -9,10 +9,10 @@ consultable (con búsqueda de texto completo FTS5 y clasificación clínica ATC)
 
 | Archivo | Descripción |
 |---|---|
-| `vademecum_ve.py` | **Módulo base de scraping**: recorre el índice alfabético (`/venezuela/ve/alfa/<letra>[/<subletra>]`), con triple capa HTTP, reintentos con backoff y caché opcional. Exporta `descargar_html()` y `recolectar()`. |
-| `scraper_vademecum.py` | **Script alternativo de scraping** con `DELAY = 1.5 s` entre peticiones. |
-| `medicamentos_vademecum_venezuela.json` | **Dataset versionado** (3,75 MB): 7057 medicamentos con `id` (código nacional de 8 dígitos), `nombre`, `slug`, `laboratorio`, `pais`, `url_ficha`, `url_equivalencias`, `url_fuente`. |
-| `crear_bd_vademecum.py` | **Carga JSON → SQLite**: crea el esquema normalizado, dimensiones, índices, vistas e índice FTS5. Idempotente y con CLI. |
+| `guia_ve.py` | **Módulo base de scraping**: recorre el índice alfabético (`/venezuela/ve/alfa/<letra>[/<subletra>]`), con triple capa HTTP, reintentos con backoff y caché opcional. Exporta `descargar_html()` y `recolectar()`. |
+| `scraper_guia.py` | **Script alternativo de scraping** con `DELAY = 1.5 s` entre peticiones. |
+| `medicamentos_guia_venezuela.json` | **Dataset versionado** (3,75 MB): 7057 medicamentos con `id` (código nacional de 8 dígitos), `nombre`, `slug`, `laboratorio`, `pais`, `url_ficha`, `url_equivalencias`, `url_fuente`. |
+| `crear_bd_guia.py` | **Carga JSON → SQLite**: crea el esquema normalizado, dimensiones, índices, vistas e índice FTS5. Idempotente y con CLI. |
 | `enriquecer_clinico.py` | **Enriquecimiento clínico**: descarga las fichas individuales y extrae vía, forma farmacéutica, código ATC, jerarquía ATC y la monografía del principio activo (15 secciones clínicas). Reanudable. |
 | `requirements.txt` | Dependencias Python. |
 
@@ -32,21 +32,21 @@ pip install -r requirements.txt        # curl_cffi + beautifulsoup4
 ## 1. Recolectar el catálogo (JSON)
 
 ```bash
-python vademecum_ve.py                        # índice completo -> JSON por defecto
-python vademecum_ve.py --delay 0.5 --salida medicamentos_vademecum_venezuela.json
+python guia_ve.py                        # índice completo -> JSON por defecto
+python guia_ve.py --delay 0.5 --salida medicamentos_guia_venezuela.json
 ```
 
 - Respeta el servidor: `DELAY = 1.0 s` por defecto entre peticiones.
 - Reintentos con backoff exponencial ante HTTP 429/5xx.
-- La caché (`--cache-dir cache_vademecum`) permite reanudar una recolección
+- La caché (`--cache-dir cache_guia`) permite reanudar una recolección
   interrumpida sin volver a golpear el servidor.
 
 ## 2. Crear la base de datos SQLite
 
 ```bash
-python crear_bd_vademecum.py                  # crea/actualiza medicamentos_vademecum_venezuela.db
-python crear_bd_vademecum.py --reemplazar     # borra y reconstruye desde cero
-python crear_bd_vademecum.py --buscar ibuprofeno --limite 5
+python crear_bd_guia.py                  # crea/actualiza medicamentos_guia_venezuela.db
+python crear_bd_guia.py --reemplazar     # borra y reconstruye desde cero
+python crear_bd_guia.py --buscar ibuprofeno --limite 5
 ```
 
 Esquema generado:
@@ -66,10 +66,10 @@ v_resumen_letras           conteo por letra (27 letras: a-z + '3')
 Uso desde Python:
 
 ```python
-from crear_bd_vademecum import crear_bd, abrir_bd, buscar
+from crear_bd_guia import crear_bd, abrir_bd, buscar
 
 crear_bd()                                    # {'medicamentos': 7057, ...}
-con = abrir_bd("medicamentos_vademecum_venezuela.db")
+con = abrir_bd("medicamentos_guia_venezuela.db")
 for fila in buscar(con, "solucion", 10):      # encuentra también "Solución"
     print(fila["id"], fila["nombre"], fila["laboratorio"])
 ```
@@ -135,7 +135,7 @@ SELECT * FROM v_resumen_vias;
   ACETAMINOFEN, …) agrupan genéricos homólogos; el enriquecimiento añade la
   agrupación definitiva vía código ATC.
 - Datos clínicos y de clasificación proceden de las fichas de
-  [vademecum.es](https://www.vademecum.es) (© Vidal Vademecum Spain, S.A.);
+  [guia.es](https://www.guia.es) (© Vidal guia Spain, S.A.);
   la información está dirigida a profesionales sanitarios.
 
 ## Estado
