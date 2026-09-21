@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="verde_farmacia">#1B7A4D</color>
+    <color name="azul_clinico">#1565C0</color>
+    <color name="alerta_embarazo">#B3261E</color>
+    <color name="aviso_lactancia">#B26A00</color>
+    <!-- Tono menor / sutil para cajas que aparecen debajo de la barra de titulo -->
+    <color name="fondo_caja_detalle">#E3F2FD</color>
+    <color name="texto_secundario">#616161</color>
+</resources>
