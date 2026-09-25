@@ -1,0 +1,42 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Círculo de fondo verde claro -->
+    <path
+        android:fillColor="#B2D8C1"
+        android:pathData="M50,50m-45,0a45,45 0,1 1,90 0a45,45 0,1 1,-90 0" />
+
+    <!-- Cápsula Izquierda (Roja/Blanca) -->
+    <path
+        android:fillColor="#E64A19"
+        android:pathData="M30,30h15v20h-15z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,50h15v20h-15z" />
+    <path
+        android:strokeColor="#3E1A1A"
+        android:strokeWidth="2"
+        android:pathData="M30,30a7.5,7.5 0,0 1,15 0v40a7.5,7.5 0,0 1,-15 0z" />
+    <path
+        android:strokeColor="#3E1A1A"
+        android:strokeWidth="2"
+        android:pathData="M30,50h15" />
+
+    <!-- Cápsula Derecha (Blanca/Verde) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M55,30h15v20h-15z" />
+    <path
+        android:fillColor="#4DB6AC"
+        android:pathData="M55,50h15v20h-15z" />
+    <path
+        android:strokeColor="#3E1A1A"
+        android:strokeWidth="2"
+        android:pathData="M55,30a7.5,7.5 0,0 1,15 0v40a7.5,7.5 0,0 1,-15 0z" />
+    <path
+        android:strokeColor="#3E1A1A"
+        android:strokeWidth="2"
+        android:pathData="M55,50h15" />
+</vector>

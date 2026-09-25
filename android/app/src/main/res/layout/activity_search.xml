@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/azul_clinico"
+        app:elevation="4dp"
+        app:liftOnScroll="false"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
         <LinearLayout
@@ -95,11 +97,12 @@
 
     </com.google.android.material.search.SearchView>
 
-    <!-- Fallback list when search view is not expanded (sin appbar behavior para evitar fade) -->
+    <!-- Fallback list when search view is not expanded -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_catalogo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:clipToPadding="false"
         android:paddingTop="8dp"
         android:paddingBottom="16dp" />

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Guia Farmaceutica</string>
+    <string name="app_tagline">Guía de Venezuela · offline</string>
+    <string name="search_hint">Buscar medicamento… (p. ej. ibu, solución)</string>
+    <string name="tab_buscar">Buscar</string>
+    <string name="tab_grupos">Grupos</string>
+    <string name="tab_favoritos">Favoritos</string>
+    <string name="empty_results">Sin resultados. Prueba con menos letras.</string>
+    <string name="db_copying">Copiando base de datos…</string>
+    <string name="db_error">No se pudo abrir la base de datos semilla.</string>
+    <string name="disclaimer">Información dirigida a profesionales sanitarios. Fuente: Referencia farmacéutica (© Vidal Spain).</string>
+    <string name="label_via">Vía de Administración</string>
+    <string name="label_forma">Forma Farmacéutica</string>
+    <string name="btn_monografia">Ver Monografía</string>
+</resources>

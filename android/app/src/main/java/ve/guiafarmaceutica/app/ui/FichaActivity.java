@@ -1,9 +1,11 @@
 package ve.guiafarmaceutica.app.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -12,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import ve.guiafarmaceutica.app.R;
 import ve.guiafarmaceutica.app.data.Monografia;
+import ve.guiafarmaceutica.app.util.DosificacionHelper;
 import ve.guiafarmaceutica.app.viewmodel.FichaViewModel;
 
 public class FichaActivity extends AppCompatActivity {
@@ -22,6 +25,7 @@ public class FichaActivity extends AppCompatActivity {
     public static final String EXTRA_ATC = "atc_codigo";
 
     private FichaViewModel viewModel;
+    private ImageView btnBack;
     private LinearLayout seccionesContainer;
     private ProgressBar progressBar;
     private TextView textNoMonografia;
@@ -37,10 +41,31 @@ public class FichaActivity extends AppCompatActivity {
         String lab = getIntent().getStringExtra(EXTRA_LAB);
         String atc = getIntent().getStringExtra(EXTRA_ATC);
 
-        setupBackButton();
+        btnBack = findViewById(R.id.btn_back);
+        btnBack.setOnClickListener(v -> onBackPressed());
 
         ((TextView) findViewById(R.id.ficha_nombre)).setText(nombre);
         ((TextView) findViewById(R.id.ficha_laboratorio)).setText(lab);
+
+        View btnCalcularDosis = findViewById(R.id.btn_calcular_dosis);
+        boolean esDosificable = DosificacionHelper.esDosificable("", "", nombre);
+        btnCalcularDosis.setVisibility(esDosificable ? View.VISIBLE : View.GONE);
+
+        btnCalcularDosis.setOnClickListener(v -> {
+            Intent calcIntent = new Intent(this, CalculadoraActivity.class);
+            calcIntent.putExtra(CalculadoraActivity.EXTRA_ATC, atc);
+            calcIntent.putExtra(CalculadoraActivity.EXTRA_NOMBRE, nombre);
+            startActivity(calcIntent);
+        });
+
+        View btnCrearImpresion = findViewById(R.id.btn_crear_impresion);
+        if (btnCrearImpresion != null) {
+            btnCrearImpresion.setOnClickListener(v -> {
+                Intent impressionIntent = new Intent(this, CrearImpresionActivity.class);
+                impressionIntent.putExtra(CrearImpresionActivity.EXTRA_MED_NOMBRE, nombre);
+                startActivity(impressionIntent);
+            });
+        }
 
         seccionesContainer = findViewById(R.id.secciones_container);
         progressBar = findViewById(R.id.ficha_progress);
@@ -54,10 +79,6 @@ public class FichaActivity extends AppCompatActivity {
         viewModel.cargarDatos(id, atc);
     }
 
-    private void setupBackButton() {
-        findViewById(R.id.btn_back).setOnClickListener(v -> onBackPressed());
-    }
-
     private void observeViewModel() {
         viewModel.getMonografia().observe(this, mono -> {
             if (mono != null) {
@@ -68,7 +89,7 @@ public class FichaActivity extends AppCompatActivity {
         });
 
         viewModel.getBanderas().observe(this, banderas -> {
-            if (banderas != null) {
+            if (banderas != null && banderas.embarazo != null && banderas.lactancia != null) {
                 actualizarBanderas(banderas.embarazo, banderas.lactancia);
             }
         });
@@ -142,5 +163,10 @@ public class FichaActivity extends AppCompatActivity {
         ((TextView) view.findViewById(R.id.seccion_contenido)).setText(Html.fromHtml(limpio, Html.FROM_HTML_MODE_COMPACT));
 
         seccionesContainer.addView(view);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

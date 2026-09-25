@@ -64,6 +64,25 @@ datos_clinicos.jsonl
 *.rej
 *.dump
 
+# --- Android Gradle & Builds -----------------------------------------------
+.gradle/
+build/
+app/build/
+android/.gradle/
+android/build/
+android/app/build/
+*.apk
+*.aab
+local.properties
+.cxx/
+captures/
+
+# --- Archivos grandes / XML crudos ----------------------------------------
+assets/prescripcion/Prescripcion.xml
+*.xml.gz
+*.tar.gz
+*.zip
+
 # --- Secretos y configuracion local ----------------------------------------
 .env
 .env.*
@@ -74,6 +93,7 @@ datos_clinicos.jsonl
 # Si prefieres compartir la configuracion de VS Code, borra la linea ".vscode/"
 .vscode/
 .idea/
+.atl/
 .DS_Store
 Thumbs.db
 desktop.ini

@@ -6,11 +6,13 @@
     android:layout_height="match_parent"
     android:background="#F5F7FA">
 
-    <!-- Barra superior fija: sin scroll flags, no se atenúa al hacer scroll -->
+    <!-- Barra superior fija -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/azul_clinico"
+        app:elevation="4dp"
+        app:liftOnScroll="false"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
         <LinearLayout
@@ -57,10 +59,11 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Contenido que hace scroll (sin appbar behavior para evitar fade) -->
+    <!-- Contenido que hace scroll -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:fillViewport="true">
 
         <LinearLayout
@@ -103,6 +106,33 @@
                         android:textColor="@color/texto_secundario"
                         android:textSize="16sp"
                         tools:text="Laboratorio Fabricante" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btn_calcular_dosis"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="4dp"
+                            android:layout_weight="1"
+                            android:text="Calcular Dosis"
+                            app:icon="@drawable/ic_search_catalog" />
+
+                        <Button
+                            android:id="@+id/btn_crear_impresion"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            android:text="Impresión Diagnóstica"
+                            app:icon="@drawable/ic_cat_monography" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 

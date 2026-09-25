@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Esquinas de encuadre/escáner de catálogo -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M3,8V5c0,-1.1 0.9,-2 2,-2h3v2H5v3H3zM16,3h3c1.1,0 2,0.9 2,2v3h-2V5h-3V3zM3,16v3c0,1.1 0.9,2 2,2h3v-2H5v-3H3zM19,16v3h-3v2h3c1.1,0 2,-0.9 2,-2v-3h-2z" />
+    <!-- Cruz médica central -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M11,7h2v3h3v2h-3v3h-2v-3H8v-2h3V7z" />
+    <!-- Línea/haz de escaneo horizontal -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M2,11.5h20v1H2z" />
+</vector>

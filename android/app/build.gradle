@@ -1,0 +1,60 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 've.guiafarmaceutica.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 've.guiafarmaceutica.app'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0.0-fase01'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+}
+
+dependencies {
+    // Material Design 3 + UI base
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+
+    // Ciclo de vida / MVVM
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.8.6'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.8.6'
+
+    // Persistencia: Room (SQLite del framework). Las tablas heredadas de la
+    // semilla se leen con @RawQuery (Room no registra el esquema legado: ver
+    // AppDatabase). La búsqueda usa FTS5 cuando el SQLite del dispositivo lo
+    // soporta (Android 11+) y degrada a LIKE en Android 7-10 (ver Repository).
+    implementation 'androidx.room:room-runtime:2.6.1'
+    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+
+    // Imagenes (placeholder + fotos de favoritos) y JSON
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+    // Solo instrumentados (Fase 1: seed de 7057 filas, FTS)
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    androidTestImplementation 'androidx.room:room-testing:2.6.1'
+}

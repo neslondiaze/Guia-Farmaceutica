@@ -1,0 +1,7 @@
+// Top-level build file: shared config + plugin versions (single source of truth).
+plugins {
+    id 'com.android.application' version '9.4.1' apply false
+}
+
+// Repositorio Guia-Farmaceutica — app Android "Guia Farmaceutica"
+// Actualizado a Gradle 9.4.1 para soporte de JDK 25.

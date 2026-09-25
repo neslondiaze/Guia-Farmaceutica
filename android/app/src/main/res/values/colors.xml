@@ -5,6 +5,6 @@
     <color name="alerta_embarazo">#B3261E</color>
     <color name="aviso_lactancia">#B26A00</color>
     <!-- Tono menor / sutil para cajas que aparecen debajo de la barra de titulo -->
-    <color name="fondo_caja_detalle">#E3F2FD</color>
+    <color name="fondo_caja_detalle">#E3F2D9</color>
     <color name="texto_secundario">#616161</color>
 </resources>

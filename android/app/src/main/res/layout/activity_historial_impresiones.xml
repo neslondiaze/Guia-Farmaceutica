@@ -16,83 +16,88 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/azul_clinico"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingHorizontal="16dp"
             android:paddingTop="16dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="12dp">
 
-            <ImageView
+            <ImageButton
+                android:id="@+id/btn_back"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@drawable/ic_app_logo" />
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Atrás"
+                android:src="@drawable/ic_back_arrow" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="GUIA FARMACEUTICA"
+                    android:text="Impresión Diagnóstica"
                     android:textColor="@android:color/white"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="GUÍA DE VENEZUELA"
+                    android:text="Historial de evaluaciones e impresiones clínicas emitidas"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
             </LinearLayout>
-
-            <ImageButton
-                android:id="@+id/btn_search"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/tab_buscar"
-                android:src="@drawable/ic_search_catalog"
-                app:tint="@android:color/white" />
 
         </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:fillViewport="true">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ProgressBar
+            android:id="@+id/progress_loading"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/categories_grid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:nestedScrollingEnabled="false" />
+        <TextView
+            android:id="@+id/text_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No hay impresiones diagnósticas registradas aún."
+            android:textColor="#9E9E9E"
+            android:visibility="gone" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="32dp"
-                android:gravity="center"
-                android:text="DiazTech - San Carlos, Cojedes"
-                android:textColor="#9E9E9E"
-                android:textSize="12sp" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_impresiones"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="8dp"
+            android:paddingBottom="80dp" />
 
-        </LinearLayout>
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_nueva_impresion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:text="Nueva Impresión"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/azul_clinico"
+            app:icon="@drawable/ic_cat_monography"
+            app:iconTint="@android:color/white" />
 
-    </androidx.core.widget.NestedScrollView>
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material 3 día/noche. Fase 6: paleta definitiva + modo oscuro fino. -->
+    <style name="Theme.GuiaFarmaceutica" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/verde_farmacia</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSecondary">@color/azul_clinico</item>
+    </style>
+</resources>
