@@ -397,7 +397,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="OBSERVACIONES"
+                        android:text="INDICACIONES MÉDICAS"
                         android:textColor="#0F4C81"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -406,7 +406,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:hint="Observaciones exclusivamente ficticias">
+                        android:hint="Escriba aquí las indicaciones médicas...">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_recipe_observaciones"
