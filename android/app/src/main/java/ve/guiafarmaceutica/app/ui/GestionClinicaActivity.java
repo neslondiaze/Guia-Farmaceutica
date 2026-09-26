@@ -18,8 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import ve.guiafarmaceutica.app.R;
 import ve.guiafarmaceutica.app.data.AppDatabase;
+import ve.guiafarmaceutica.app.data.ImpresionDiagnostica;
 import ve.guiafarmaceutica.app.data.Paciente;
 import ve.guiafarmaceutica.app.repository.SettingsRepository;
+import ve.guiafarmaceutica.app.util.CryptoHelper;
 import ve.guiafarmaceutica.app.util.DemoDataHelper;
 
 public class GestionClinicaActivity extends AppCompatActivity {
@@ -83,7 +85,38 @@ public class GestionClinicaActivity extends AppCompatActivity {
 
     private void cargarPacientesRecientes() {
         new Thread(() -> {
-            List<Paciente> lista = AppDatabase.obtener(this).pacienteDao().listarPacientes();
+            AppDatabase db = AppDatabase.obtener(this);
+
+            // Sincronizar pacientes desde impresiones existentes para asegurar que todos los pacientes del historial aparezcan
+            try {
+                List<ImpresionDiagnostica> impresiones = db.impresionDao().listarImpresiones();
+                if (impresiones != null) {
+                    for (ImpresionDiagnostica imp : impresiones) {
+                        String nom = CryptoHelper.descifrar(imp.paciente_nombre);
+                        String ced = CryptoHelper.descifrar(imp.paciente_cedula);
+                        if (nom != null && !nom.isEmpty() && !"María López".equalsIgnoreCase(nom)) {
+                            Paciente existente = null;
+                            if (ced != null && !ced.isEmpty() && !"DEMO-10482".equalsIgnoreCase(ced)) {
+                                existente = db.pacienteDao().obtenerPorIdentificacion(ced);
+                            } else {
+                                List<Paciente> porNombre = db.pacienteDao().buscarPacientes(nom);
+                                if (porNombre != null && !porNombre.isEmpty()) {
+                                    existente = porNombre.get(0);
+                                }
+                            }
+                            if (existente == null) {
+                                Paciente p = new Paciente();
+                                p.nombre_completo = nom;
+                                p.identificacion = (ced != null && !ced.isEmpty()) ? ced : ("ID-" + (System.currentTimeMillis() % 100000));
+                                p.edad_calculada = imp.paciente_edad != null ? imp.paciente_edad : "S/I";
+                                db.pacienteDao().insertar(p);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ignored) {}
+
+            List<Paciente> lista = db.pacienteDao().listarPacientes();
             List<Paciente> ultimos5 = new ArrayList<>();
             if (lista != null) {
                 int limit = Math.min(5, lista.size());
