@@ -299,7 +299,7 @@ public class CrearImpresionActivity extends AppCompatActivity {
 
         class ViewHolder extends RecyclerView.ViewHolder {
             TextView nombre, presentacion, concentracion, dosis;
-            ImageButton btnEliminar;
+            ImageButton btnEliminar, btnGuia;
 
             ViewHolder(View view) {
                 super(view);
@@ -308,6 +308,7 @@ public class CrearImpresionActivity extends AppCompatActivity {
                 concentracion = view.findViewById(R.id.text_item_concentracion);
                 dosis = view.findViewById(R.id.text_item_dosis);
                 btnEliminar = view.findViewById(R.id.btn_eliminar_medicamento_referencia);
+                btnGuia = view.findViewById(R.id.btn_ver_guia_medicamento);
             }
 
             void bind(ImpresionDetalle d) {
@@ -324,6 +325,16 @@ public class CrearImpresionActivity extends AppCompatActivity {
                         textEmptyMedicamentosReferencia.setVisibility(listaMedicamentosReferencia.isEmpty() ? View.VISIBLE : View.GONE);
                     }
                 });
+                if (btnGuia != null) {
+                    btnGuia.setOnClickListener(v -> {
+                        Intent intent = new Intent(v.getContext(), FichaActivity.class);
+                        if (d.medicamento_id != null && !d.medicamento_id.isEmpty()) {
+                            intent.putExtra(FichaActivity.EXTRA_ID, d.medicamento_id);
+                        }
+                        intent.putExtra(FichaActivity.EXTRA_NOMBRE, d.medicamento_nombre);
+                        v.getContext().startActivity(intent);
+                    });
+                }
             }
         }
     }
