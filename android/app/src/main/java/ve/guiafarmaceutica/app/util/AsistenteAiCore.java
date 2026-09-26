@@ -55,6 +55,11 @@ public class AsistenteAiCore {
 
     private static List<String> extraerTerminosClave(String texto) {
         List<String> terminos = new ArrayList<>();
+        if (texto.contains("gastroenterit") || texto.contains("diarr") || texto.contains("deshidrat") || texto.contains("vomit") || texto.contains("vómit")) {
+            terminos.add("suero");
+            terminos.add("oral");
+            terminos.add("racecadotrilo");
+        }
         if (texto.contains("cefalea") || texto.contains("migrañ") || texto.contains("cabeza")) {
             terminos.add("acetaminofen");
             terminos.add("ibuprofeno");
