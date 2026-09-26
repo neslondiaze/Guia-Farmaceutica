@@ -168,18 +168,13 @@ public class PerfilPacienteActivity extends AppCompatActivity {
             return;
         }
 
-        ImageView imageView = new ImageView(this);
-        imageView.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
-        imageView.setAdjustViewBounds(true);
-        imageView.setPadding(30, 30, 30, 20);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_ver_imagen, null);
+        ImageView imageView = dialogView.findViewById(R.id.img_dialog_ampliada);
         Glide.with(this).load(file).into(imageView);
 
         new AlertDialog.Builder(this)
                 .setTitle(img.descripcion_datos != null ? img.descripcion_datos : "Estudio Complementario")
-                .setView(imageView)
+                .setView(dialogView)
                 .setPositiveButton("Cerrar", null)
                 .show();
     }
