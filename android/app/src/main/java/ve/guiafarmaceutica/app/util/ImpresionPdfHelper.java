@@ -243,18 +243,11 @@ public class ImpresionPdfHelper {
         int num = 1;
         for (ImpresionDetalle d : detalles) {
             paint.setColor(Color.parseColor("#1565C0"));
-            paint.setTextSize(11);
+            paint.setTextSize(12);
             paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-            canvas1.drawText(num + ". " + d.medicamento_nombre + (d.presentacion != null ? " (" + d.presentacion + ")" : ""), 50, y, paint);
+            canvas1.drawText(num + ". " + d.medicamento_nombre, 50, y, paint);
 
-            y += 16;
-            paint.setColor(Color.parseColor("#333333"));
-            paint.setTextSize(10);
-            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-            String indicacion = "    Dosis: " + d.dosificacion + " - " + d.frecuencia_instrucciones + " (Duración: " + d.duracion_dias + ")";
-            canvas1.drawText(indicacion, 50, y, paint);
-
-            y += 22;
+            y += 24;
             num++;
         }
 
@@ -342,24 +335,47 @@ public class ImpresionPdfHelper {
         paint.setStrokeWidth(1);
         canvas2.drawLine(40, y, pageWidth - 40, y, paint);
 
-        // Contenido de Indicaciones Médicas / Observaciones
+        // Contenido de Indicaciones Médicas / Observaciones y Dosificación detallada
         y += 30;
         paint.setColor(Color.parseColor("#0B4F9C"));
         paint.setTextSize(13);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        canvas2.drawText("INSTRUCCIONES Y RECOMENDACIONES CLÍNICAS", 40, y, paint);
+        canvas2.drawText("DETALLE DE DOSIFICACIÓN Y POSOLOGÍA", 40, y, paint);
 
-        y += 22;
-        paint.setColor(Color.parseColor("#333333"));
-        paint.setTextSize(11);
-        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-        String obs = (impresion.observaciones != null && !impresion.observaciones.isEmpty()) 
-                ? impresion.observaciones 
-                : "1. Cumplir estrictamente con el tratamiento farmacológico indicado en el récipe.\n2. Reposo relativo y adecuada hidratación.\n3. Acudir a control médico en caso de persistir o agravarse los síntomas.";
-        
-        for (String linea : obs.split("\n")) {
-            canvas2.drawText(linea, 40, y, paint);
-            y += 20;
+        y += 20;
+        int numInd = 1;
+        for (ImpresionDetalle d : detalles) {
+            paint.setColor(Color.parseColor("#1565C0"));
+            paint.setTextSize(11);
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+            canvas2.drawText(numInd + ". " + d.medicamento_nombre, 50, y, paint);
+
+            y += 16;
+            paint.setColor(Color.parseColor("#333333"));
+            paint.setTextSize(10);
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+            String indicacion = "    Dosis: " + d.dosificacion + " - " + d.frecuencia_instrucciones + " (Duración: " + d.duracion_dias + ")";
+            canvas2.drawText(indicacion, 50, y, paint);
+
+            y += 22;
+            numInd++;
+        }
+
+        if (impresion.observaciones != null && !impresion.observaciones.isEmpty()) {
+            y += 15;
+            paint.setColor(Color.parseColor("#0B4F9C"));
+            paint.setTextSize(12);
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+            canvas2.drawText("INDICACIONES Y CUIDADOS ADICIONALES:", 40, y, paint);
+
+            y += 18;
+            paint.setColor(Color.parseColor("#333333"));
+            paint.setTextSize(10);
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+            for (String linea : impresion.observaciones.split("\n")) {
+                canvas2.drawText(linea, 40, y, paint);
+                y += 18;
+            }
         }
 
         // Pie de página: Firma, Sello y "Lugar del sello"
