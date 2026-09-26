@@ -217,7 +217,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:contentDescription="Impresión diagnóstica"
-                            android:src="@drawable/ic_cat_science"
+                            android:src="@drawable/ic_cat_monography"
                             app:tint="#0F4C81" />
 
                         <LinearLayout
@@ -267,7 +267,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:contentDescription="Calculadora"
-                            android:src="@drawable/ic_cat_therapy"
+                            android:src="@drawable/ic_pill"
                             app:tint="#0F4C81" />
 
                         <LinearLayout
@@ -317,7 +317,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:contentDescription="Pacientes"
-                            android:src="@drawable/ic_cat_anatomy"
+                            android:src="@drawable/ic_cat_security"
                             app:tint="#0F4C81" />
 
                         <LinearLayout
@@ -367,7 +367,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:contentDescription="Monografías"
-                            android:src="@drawable/ic_cat_monography"
+                            android:src="@drawable/ic_cat_science"
                             app:tint="#0F4C81" />
 
                         <LinearLayout
