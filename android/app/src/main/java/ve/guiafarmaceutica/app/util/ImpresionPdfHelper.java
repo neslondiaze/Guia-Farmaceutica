@@ -80,7 +80,6 @@ public class ImpresionPdfHelper {
 
         y += 18;
         canvas.drawText("EDAD: " + (impresion.paciente_edad != null ? impresion.paciente_edad : "S/I"), 40, y, paint);
-        canvas.drawText("PESO: " + (impresion.paciente_peso != null ? impresion.paciente_peso : "S/I"), 200, y, paint);
         canvas.drawText("IMPRESIÓN DIAGNÓSTICA: " + (impresion.diagnostico != null ? impresion.diagnostico : "Consulta General"), 320, y, paint);
 
         // Línea divisoria
@@ -154,6 +153,245 @@ public class ImpresionPdfHelper {
         }
 
         File file = new File(pdfDir, "Impresion_" + impresion.id + "_" + System.currentTimeMillis() + ".pdf");
+        FileOutputStream fos = new FileOutputStream(file);
+        document.writeTo(fos);
+        document.close();
+        fos.close();
+
+        return file;
+    }
+
+    public static File generarPdfRecipeEIndicaciones(Context context, ImpresionDiagnostica impresion, List<ImpresionDetalle> detalles) throws IOException {
+        SettingsRepository settings = new SettingsRepository(context);
+
+        int pageWidth = 595;  // A4 width in points
+        int pageHeight = 842; // A4 height in points
+
+        PdfDocument document = new PdfDocument();
+
+        // ==========================================
+        // PÁGINA 1: RÉCIPE MÉDICO
+        // ==========================================
+        PdfDocument.PageInfo pageInfo1 = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
+        PdfDocument.Page page1 = document.startPage(pageInfo1);
+        Canvas canvas1 = page1.getCanvas();
+
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+
+        int y = 50;
+
+        // Membrete del Médico
+        paint.setColor(Color.parseColor("#0B4F9C"));
+        paint.setTextSize(18);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        canvas1.drawText(settings.getMedicoNombre(), 40, y, paint);
+
+        y += 20;
+        paint.setColor(Color.parseColor("#424242"));
+        paint.setTextSize(12);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        canvas1.drawText(settings.getMedicoEspecialidad() + " | " + settings.getMedicoMpps(), 40, y, paint);
+
+        y += 18;
+        paint.setTextSize(10);
+        paint.setColor(Color.parseColor("#616161"));
+        canvas1.drawText(settings.getMedicoClinica() + " - " + settings.getMedicoDireccion(), 40, y, paint);
+
+        y += 16;
+        canvas1.drawText("Telf: " + settings.getMedicoTelefono() + " | Email: " + settings.getMedicoEmail(), 40, y, paint);
+
+        y += 15;
+        paint.setColor(Color.parseColor("#0B4F9C"));
+        paint.setStrokeWidth(2);
+        canvas1.drawLine(40, y, pageWidth - 40, y, paint);
+
+        // Título: RÉCIPE MÉDICO
+        y += 30;
+        paint.setColor(Color.parseColor("#0B4F9C"));
+        paint.setTextSize(16);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        canvas1.drawText("RÉCIPE MÉDICO", 40, y, paint);
+
+        paint.setColor(Color.parseColor("#616161"));
+        paint.setTextSize(10);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        canvas1.drawText("Fecha: " + impresion.fecha_creacion, pageWidth - 160, y, paint);
+
+        y += 25;
+        paint.setColor(Color.parseColor("#212121"));
+        paint.setTextSize(11);
+        canvas1.drawText("PACIENTE: " + impresion.paciente_nombre, 40, y, paint);
+        canvas1.drawText("C.I. / ID: " + (impresion.paciente_cedula != null ? impresion.paciente_cedula : "S/I"), 320, y, paint);
+
+        y += 18;
+        canvas1.drawText("EDAD: " + (impresion.paciente_edad != null ? impresion.paciente_edad : "S/I"), 40, y, paint);
+
+        y += 15;
+        paint.setColor(Color.parseColor("#E0E0E0"));
+        paint.setStrokeWidth(1);
+        canvas1.drawLine(40, y, pageWidth - 40, y, paint);
+
+        // Medicamentos indicados o seleccionados
+        y += 30;
+        paint.setColor(Color.parseColor("#0B4F9C"));
+        paint.setTextSize(13);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        canvas1.drawText("MEDICAMENTOS INDICADOS", 40, y, paint);
+
+        y += 20;
+        int num = 1;
+        for (ImpresionDetalle d : detalles) {
+            paint.setColor(Color.parseColor("#1565C0"));
+            paint.setTextSize(11);
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+            canvas1.drawText(num + ". " + d.medicamento_nombre + (d.presentacion != null ? " (" + d.presentacion + ")" : ""), 50, y, paint);
+
+            y += 16;
+            paint.setColor(Color.parseColor("#333333"));
+            paint.setTextSize(10);
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+            String indicacion = "    Dosis: " + d.dosificacion + " - " + d.frecuencia_instrucciones + " (Duración: " + d.duracion_dias + ")";
+            canvas1.drawText(indicacion, 50, y, paint);
+
+            y += 22;
+            num++;
+        }
+
+        // Pie de página: Firma, Sello y "Lugar del sello"
+        y = pageHeight - 120;
+        paint.setColor(Color.parseColor("#9E9E9E"));
+        paint.setStrokeWidth(1);
+        canvas1.drawLine(pageWidth - 220, y, pageWidth - 60, y, paint);
+
+        y += 15;
+        paint.setColor(Color.parseColor("#424242"));
+        paint.setTextSize(10);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        canvas1.drawText("Firma y Sello del Médico", pageWidth - 200, y, paint);
+
+        y += 15;
+        paint.setColor(Color.parseColor("#D32F2F"));
+        paint.setTextSize(9);
+        canvas1.drawText("[ Lugar del Sello ]", pageWidth - 170, y, paint);
+
+        paint.setColor(Color.parseColor("#9E9E9E"));
+        paint.setTextSize(8);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC));
+        canvas1.drawText("Récipe Médico emitido mediante Guía Farmacéutica Venezuela", 40, pageHeight - 30, paint);
+
+        document.finishPage(page1);
+
+        // ==========================================
+        // PÁGINA 2: INDICACIONES MÉDICAS
+        // ==========================================
+        PdfDocument.PageInfo pageInfo2 = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 2).create();
+        PdfDocument.Page page2 = document.startPage(pageInfo2);
+        Canvas canvas2 = page2.getCanvas();
+
+        y = 50;
+
+        // Membrete del Médico
+        paint.setColor(Color.parseColor("#0B4F9C"));
+        paint.setTextSize(18);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        canvas2.drawText(settings.getMedicoNombre(), 40, y, paint);
+
+        y += 20;
+        paint.setColor(Color.parseColor("#424242"));
+        paint.setTextSize(12);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        canvas2.drawText(settings.getMedicoEspecialidad() + " | " + settings.getMedicoMpps(), 40, y, paint);
+
+        y += 18;
+        paint.setTextSize(10);
+        paint.setColor(Color.parseColor("#616161"));
+        canvas2.drawText(settings.getMedicoClinica() + " - " + settings.getMedicoDireccion(), 40, y, paint);
+
+        y += 16;
+        canvas2.drawText("Telf: " + settings.getMedicoTelefono() + " | Email: " + settings.getMedicoEmail(), 40, y, paint);
+
+        y += 15;
+        paint.setColor(Color.parseColor("#0B4F9C"));
+        paint.setStrokeWidth(2);
+        canvas2.drawLine(40, y, pageWidth - 40, y, paint);
+
+        // Título: INDICACIONES MÉDICAS
+        y += 30;
+        paint.setColor(Color.parseColor("#0B4F9C"));
+        paint.setTextSize(16);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        canvas2.drawText("INDICACIONES MÉDICAS", 40, y, paint);
+
+        paint.setColor(Color.parseColor("#616161"));
+        paint.setTextSize(10);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        canvas2.drawText("Fecha: " + impresion.fecha_creacion, pageWidth - 160, y, paint);
+
+        y += 25;
+        paint.setColor(Color.parseColor("#212121"));
+        paint.setTextSize(11);
+        canvas2.drawText("PACIENTE: " + impresion.paciente_nombre, 40, y, paint);
+        canvas2.drawText("C.I. / ID: " + (impresion.paciente_cedula != null ? impresion.paciente_cedula : "S/I"), 320, y, paint);
+
+        y += 18;
+        canvas2.drawText("EDAD: " + (impresion.paciente_edad != null ? impresion.paciente_edad : "S/I"), 40, y, paint);
+
+        y += 15;
+        paint.setColor(Color.parseColor("#E0E0E0"));
+        paint.setStrokeWidth(1);
+        canvas2.drawLine(40, y, pageWidth - 40, y, paint);
+
+        // Contenido de Indicaciones Médicas / Observaciones
+        y += 30;
+        paint.setColor(Color.parseColor("#0B4F9C"));
+        paint.setTextSize(13);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        canvas2.drawText("INSTRUCCIONES Y RECOMENDACIONES CLÍNICAS", 40, y, paint);
+
+        y += 22;
+        paint.setColor(Color.parseColor("#333333"));
+        paint.setTextSize(11);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        String obs = (impresion.observaciones != null && !impresion.observaciones.isEmpty()) 
+                ? impresion.observaciones 
+                : "1. Cumplir estrictamente con el tratamiento farmacológico indicado en el récipe.\n2. Reposo relativo y adecuada hidratación.\n3. Acudir a control médico en caso de persistir o agravarse los síntomas.";
+        
+        for (String linea : obs.split("\n")) {
+            canvas2.drawText(linea, 40, y, paint);
+            y += 20;
+        }
+
+        // Pie de página: Firma, Sello y "Lugar del sello"
+        y = pageHeight - 120;
+        paint.setColor(Color.parseColor("#9E9E9E"));
+        paint.setStrokeWidth(1);
+        canvas2.drawLine(pageWidth - 220, y, pageWidth - 60, y, paint);
+
+        y += 15;
+        paint.setColor(Color.parseColor("#424242"));
+        paint.setTextSize(10);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        canvas2.drawText("Firma y Sello del Médico", pageWidth - 200, y, paint);
+
+        y += 15;
+        paint.setColor(Color.parseColor("#D32F2F"));
+        paint.setTextSize(9);
+        canvas2.drawText("[ Lugar del Sello ]", pageWidth - 170, y, paint);
+
+        paint.setColor(Color.parseColor("#9E9E9E"));
+        paint.setTextSize(8);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC));
+        canvas2.drawText("Indicaciones Médicas emitidas mediante Guía Farmacéutica Venezuela", 40, pageHeight - 30, paint);
+
+        document.finishPage(page2);
+
+        File pdfDir = new File(context.getCacheDir(), "impresiones");
+        if (!pdfDir.exists()) {
+            pdfDir.mkdirs();
+        }
+
+        File file = new File(pdfDir, "Recipe_e_Indicaciones_" + impresion.id + "_" + System.currentTimeMillis() + ".pdf");
         FileOutputStream fos = new FileOutputStream(file);
         document.writeTo(fos);
         document.close();

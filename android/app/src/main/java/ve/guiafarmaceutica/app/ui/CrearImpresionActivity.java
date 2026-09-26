@@ -113,13 +113,10 @@ public class CrearImpresionActivity extends AppCompatActivity {
         Button btnAgregarFarmaco = findViewById(R.id.btn_agregar_item_impresion);
         btnAgregarFarmaco.setOnClickListener(v -> agregarFarmacoActual());
 
-        Button btnBorrador = findViewById(R.id.btn_guardar_borrador_impresion);
-        if (btnBorrador != null) {
-            btnBorrador.setOnClickListener(v -> guardarImpresion("Borrador"));
+        Button btnCompartir = findViewById(R.id.btn_compartir_enviar_impresion);
+        if (btnCompartir != null) {
+            btnCompartir.setOnClickListener(v -> guardarYCompartirImpresion());
         }
-
-        Button btnGenerarPdf = findViewById(R.id.btn_generar_pdf_impresion);
-        btnGenerarPdf.setOnClickListener(v -> guardarImpresion("Emitido"));
     }
 
     private void evaluarConIA() {
@@ -204,7 +201,7 @@ public class CrearImpresionActivity extends AppCompatActivity {
         Toast.makeText(this, "Fármaco agregado a la lista", Toast.LENGTH_SHORT).show();
     }
 
-    private void guardarImpresion(String estado) {
+    private void guardarYCompartirImpresion() {
         String medNombre = editMedNombre.getText().toString().trim();
         if (!medNombre.isEmpty()) {
             agregarFarmacoActual();
@@ -226,7 +223,7 @@ public class CrearImpresionActivity extends AppCompatActivity {
         impresion.paciente_edad = editPacienteEdad.getText().toString().trim();
         impresion.diagnostico = CryptoHelper.cifrar(editPacienteDiagnostico.getText().toString().trim());
         impresion.observaciones = editObservaciones.getText().toString().trim();
-        impresion.estado = estado;
+        impresion.estado = "Emitido";
         impresion.fecha_creacion = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
         final String finalPacienteNombre = pacienteNombre;
@@ -243,26 +240,21 @@ public class CrearImpresionActivity extends AppCompatActivity {
                 AppDatabase.obtener(this).impresionDao().insertarDetalles(listaMedicamentosReferencia);
 
                 runOnUiThread(() -> {
-                    if ("Borrador".equalsIgnoreCase(estado)) {
-                        Toast.makeText(this, "Borrador de impresión diagnóstica guardado exitosamente", Toast.LENGTH_SHORT).show();
-                        finish();
-                    } else {
-                        ImpresionDiagnostica impresionClara = new ImpresionDiagnostica();
-                        impresionClara.id = impresionId;
-                        impresionClara.paciente_nombre = finalPacienteNombre;
-                        impresionClara.paciente_cedula = finalPacienteCedula;
-                        impresionClara.paciente_edad = impresion.paciente_edad;
-                        impresionClara.diagnostico = finalDiagnostico;
-                        impresionClara.observaciones = impresion.observaciones;
-                        impresionClara.fecha_creacion = impresion.fecha_creacion;
+                    ImpresionDiagnostica impresionClara = new ImpresionDiagnostica();
+                    impresionClara.id = impresionId;
+                    impresionClara.paciente_nombre = finalPacienteNombre;
+                    impresionClara.paciente_cedula = finalPacienteCedula;
+                    impresionClara.paciente_edad = impresion.paciente_edad;
+                    impresionClara.diagnostico = finalDiagnostico;
+                    impresionClara.observaciones = impresion.observaciones;
+                    impresionClara.fecha_creacion = impresion.fecha_creacion;
 
-                        try {
-                            File pdfFile = ImpresionPdfHelper.generarPdfImpresion(this, impresionClara, listaMedicamentosReferencia);
-                            Toast.makeText(this, "Ficha de Impresión Diagnóstica PDF generada exitosamente", Toast.LENGTH_SHORT).show();
-                            compartirPdf(pdfFile);
-                        } catch (Exception ex) {
-                            Toast.makeText(this, "Error al generar PDF: " + ex.getMessage(), Toast.LENGTH_LONG).show();
-                        }
+                    try {
+                        File pdfFile = ImpresionPdfHelper.generarPdfRecipeEIndicaciones(this, impresionClara, listaMedicamentosReferencia);
+                        Toast.makeText(this, "Récipe e Indicaciones Médicas PDF generados exitosamente", Toast.LENGTH_SHORT).show();
+                        compartirPdf(pdfFile);
+                    } catch (Exception ex) {
+                        Toast.makeText(this, "Error al generar PDF: " + ex.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
             } catch (Exception e) {

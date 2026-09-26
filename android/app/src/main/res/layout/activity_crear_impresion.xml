@@ -428,23 +428,15 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_guardar_borrador_impresion"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
+                    android:id="@+id/btn_compartir_enviar_impresion"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
-                    android:layout_weight="1"
-                    android:text="Guardar borrador" />
-
-                <Button
-                    android:id="@+id/btn_generar_pdf_impresion"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:layout_weight="1"
                     android:backgroundTint="#0F4C81"
-                    android:text="Revisar vista previa"
-                    android:textColor="@android:color/white" />
+                    android:text="Compartir o enviar"
+                    android:textColor="@android:color/white"
+                    app:icon="@android:drawable/ic_menu_share"
+                    app:iconTint="@android:color/white" />
 
             </LinearLayout>
 
