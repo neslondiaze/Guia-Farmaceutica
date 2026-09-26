@@ -144,11 +144,11 @@ public class CrearImpresionActivity extends AppCompatActivity {
                     ImpresionDetalle d = new ImpresionDetalle();
                     d.medicamento_id = med.id;
                     d.medicamento_nombre = med.nombre;
-                    d.presentacion = med.forma != null ? med.forma : "Ejemplo";
-                    d.concentracion = med.atc_descripcion != null ? med.atc_descripcion : "Ficticia";
-                    d.dosificacion = "Según ejemplo";
-                    d.frecuencia_instrucciones = "c/8h";
-                    d.duracion_dias = "7 días";
+                    d.presentacion = med.forma != null ? med.forma : "";
+                    d.concentracion = med.atc_descripcion != null ? med.atc_descripcion : "";
+                    d.dosificacion = "";
+                    d.frecuencia_instrucciones = "";
+                    d.duracion_dias = "";
 
                     listaMedicamentosReferencia.add(d);
                     adapter.notifyDataSetChanged();
@@ -179,11 +179,11 @@ public class CrearImpresionActivity extends AppCompatActivity {
 
         ImpresionDetalle d = new ImpresionDetalle();
         d.medicamento_nombre = medNombre;
-        d.presentacion = presentacion.isEmpty() ? "Ejemplo" : presentacion;
-        d.concentracion = concentracion.isEmpty() ? "Ficticia" : concentracion;
-        d.dosificacion = dosis.isEmpty() ? "Según ejemplo" : dosis;
-        d.frecuencia_instrucciones = frecuencia.isEmpty() ? "c/8h" : frecuencia;
-        d.duracion_dias = duracion.isEmpty() ? "7 días" : duracion;
+        d.presentacion = presentacion;
+        d.concentracion = concentracion;
+        d.dosificacion = dosis;
+        d.frecuencia_instrucciones = frecuencia;
+        d.duracion_dias = duracion;
 
         listaMedicamentosReferencia.add(d);
         adapter.notifyDataSetChanged();
