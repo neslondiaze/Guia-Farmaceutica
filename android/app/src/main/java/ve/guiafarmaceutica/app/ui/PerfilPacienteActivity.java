@@ -158,11 +158,24 @@ public class PerfilPacienteActivity extends AppCompatActivity {
     }
 
     private void mostrarImagenAmpliada(ImagenComplementaria img) {
-        if (img.ruta_imagen == null) return;
+        if (img.ruta_imagen == null) {
+            Toast.makeText(this, "Ruta de imagen no disponible", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        File file = new File(img.ruta_imagen);
+        if (!file.exists()) {
+            Toast.makeText(this, "El archivo de imagen no existe en el almacenamiento", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         ImageView imageView = new ImageView(this);
+        imageView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
         imageView.setAdjustViewBounds(true);
-        imageView.setPadding(20, 20, 20, 20);
-        Glide.with(this).load(new File(img.ruta_imagen)).into(imageView);
+        imageView.setPadding(30, 30, 30, 20);
+        Glide.with(this).load(file).into(imageView);
 
         new AlertDialog.Builder(this)
                 .setTitle(img.descripcion_datos != null ? img.descripcion_datos : "Estudio Complementario")
