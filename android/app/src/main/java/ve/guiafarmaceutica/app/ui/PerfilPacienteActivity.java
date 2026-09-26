@@ -69,9 +69,6 @@ public class PerfilPacienteActivity extends AppCompatActivity {
         editAltura = findViewById(R.id.edit_perfil_altura);
         editNotas = findViewById(R.id.edit_perfil_notas);
 
-        Button btnEditar = findViewById(R.id.btn_editar_ficha);
-        btnEditar.setOnClickListener(v -> guardarCambiosFicha());
-
         findViewById(R.id.btn_perfil_nueva_impresion).setOnClickListener(v -> {
             Intent intent = new Intent(this, CrearImpresionActivity.class);
             if (pacienteId != -1) {

@@ -55,15 +55,6 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btn_editar_ficha"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Guardar ficha"
-                android:textColor="#0F4C81"
-                android:textSize="12sp" />
-
         </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
