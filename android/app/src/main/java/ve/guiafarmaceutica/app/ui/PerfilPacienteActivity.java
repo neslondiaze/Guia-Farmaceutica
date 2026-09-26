@@ -80,13 +80,7 @@ public class PerfilPacienteActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        findViewById(R.id.btn_perfil_historial).setOnClickListener(v -> {
-            Intent intent = new Intent(this, HistorialImpresionesActivity.class);
-            if (pacienteId != -1) {
-                intent.putExtra("extra_paciente_id", pacienteId);
-            }
-            startActivity(intent);
-        });
+        findViewById(R.id.btn_perfil_historial).setOnClickListener(v -> guardarCambiosFicha());
     }
 
     private void cargarDatosPaciente() {

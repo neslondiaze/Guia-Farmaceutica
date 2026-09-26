@@ -426,12 +426,12 @@
 
                 <Button
                     android:id="@+id/btn_perfil_historial"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/Widget.Material3.Button.TonalButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_weight="1"
-                    android:text="Ver Historial" />
+                    android:text="Guardar ficha" />
 
             </LinearLayout>
 
