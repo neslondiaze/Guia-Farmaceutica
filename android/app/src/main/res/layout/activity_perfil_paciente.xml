@@ -158,11 +158,15 @@
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:layout_weight="1"
-                            android:hint="EDAD CALCULADA">
+                            android:hint="EDAD CALCULADA"
+                            app:boxBackgroundColor="#F1F5F9"
+                            app:boxStrokeColor="#0F4C81"
+                            app:boxStrokeWidth="1.5dp">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_perfil_edad"
@@ -178,7 +182,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:hint="SEXO">
+                        android:hint="SEXO"
+                        app:boxBackgroundColor="#F1F5F9"
+                        app:boxStrokeColor="#0F4C81"
+                        app:boxStrokeWidth="1.5dp">
 
                         <com.google.android.material.textfield.MaterialAutoCompleteTextView
                             android:id="@+id/edit_perfil_sexo"
@@ -335,11 +342,15 @@
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:layout_weight="1"
-                            android:hint="GRUPO SANGUÍNEO">
+                            android:hint="GRUPO SANGUÍNEO"
+                            app:boxBackgroundColor="#F1F5F9"
+                            app:boxStrokeColor="#0F4C81"
+                            app:boxStrokeWidth="1.5dp">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_perfil_grupo_sang"

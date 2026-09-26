@@ -171,11 +171,15 @@
                         android:orientation="horizontal">
 
                         <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="6dp"
                             android:layout_weight="1"
-                            android:hint="FECHA DE SEGUIMIENTO">
+                            android:hint="FECHA DE SEGUIMIENTO"
+                            app:boxBackgroundColor="#F1F5F9"
+                            app:boxStrokeColor="#0F4C81"
+                            app:boxStrokeWidth="1.5dp">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_indicacion_fecha_seg"
