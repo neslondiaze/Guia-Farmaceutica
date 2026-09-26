@@ -2,4 +2,6 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <cache-path name="impresiones" path="impresiones/" />
     <cache-path name="exports" path="exports/" />
+    <files-path name="imagenes_pacientes" path="imagenes_pacientes/" />
+    <files-path name="internal_files" path="." />
 </paths>
