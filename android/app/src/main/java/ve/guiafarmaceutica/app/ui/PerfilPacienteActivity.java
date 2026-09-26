@@ -2,6 +2,8 @@ package ve.guiafarmaceutica.app.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -20,7 +22,8 @@ public class PerfilPacienteActivity extends AppCompatActivity {
     private Paciente paciente;
 
     private TextView textHeaderTitle, textHeaderSub;
-    private TextInputEditText editNombre, editId, editNac, editEdad, editSexo;
+    private TextInputEditText editNombre, editId, editNac, editEdad;
+    private AutoCompleteTextView editSexo;
     private TextInputEditText editTelefono, editCorreo, editDireccion, editEmergencia;
     private TextInputEditText editAlergias, editCondiciones, editGrupoSang, editPeso, editAltura, editNotas;
 
@@ -47,6 +50,12 @@ public class PerfilPacienteActivity extends AppCompatActivity {
         editNac = findViewById(R.id.edit_perfil_fecha_nac);
         editEdad = findViewById(R.id.edit_perfil_edad);
         editSexo = findViewById(R.id.edit_perfil_sexo);
+
+        if (editSexo != null) {
+            String[] opcionesSexo = new String[]{"FEMENINO", "MASCULINO", "OTR@"};
+            ArrayAdapter<String> adapterSexo = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, opcionesSexo);
+            editSexo.setAdapter(adapterSexo);
+        }
 
         editTelefono = findViewById(R.id.edit_perfil_telefono);
         editCorreo = findViewById(R.id.edit_perfil_correo);
@@ -102,7 +111,9 @@ public class PerfilPacienteActivity extends AppCompatActivity {
                     editId.setText(paciente.identificacion);
                     editNac.setText(paciente.fecha_nacimiento);
                     editEdad.setText(paciente.edad_calculada);
-                    editSexo.setText(paciente.sexo);
+                    if (editSexo != null && paciente.sexo != null) {
+                        editSexo.setText(paciente.sexo, false);
+                    }
 
                     editTelefono.setText(paciente.telefono);
                     editCorreo.setText(paciente.correo);
@@ -135,7 +146,7 @@ public class PerfilPacienteActivity extends AppCompatActivity {
         paciente.identificacion = editId.getText().toString().trim();
         paciente.fecha_nacimiento = editNac.getText().toString().trim();
         paciente.edad_calculada = editEdad.getText().toString().trim();
-        paciente.sexo = editSexo.getText().toString().trim();
+        paciente.sexo = editSexo != null ? editSexo.getText().toString().trim() : "";
 
         paciente.telefono = editTelefono.getText().toString().trim();
         paciente.correo = editCorreo.getText().toString().trim();

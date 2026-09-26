@@ -40,7 +40,7 @@
                     android:id="@+id/text_perfil_header_sub"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PACIENTE FICTICIA: MARÍA LÓPEZ"
+                    android:text="EXPEDIENTE CLÍNICO"
                     android:textColor="#E0E0E0"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -60,7 +60,7 @@
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Editar ficha"
+                android:text="Guardar ficha"
                 android:textColor="#0F4C81"
                 android:textSize="12sp" />
 
@@ -120,8 +120,7 @@
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_perfil_nombre"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="María López" />
+                                android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -134,8 +133,7 @@
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_perfil_id"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="DEMO-10482" />
+                                android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
@@ -156,8 +154,7 @@
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_perfil_fecha_nac"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="06 / 12 / 1988" />
+                                android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -170,23 +167,24 @@
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_perfil_edad"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="38 años" />
+                                android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
 
+                    <!-- Dropdown / Combobox para Sexo -->
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:hint="SEXO">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
                             android:id="@+id/edit_perfil_sexo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Femenino" />
+                            android:inputType="none" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
@@ -233,8 +231,7 @@
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_perfil_telefono"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="+00 555 010 2026" />
+                                android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -247,8 +244,7 @@
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_perfil_correo"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="maria.lopez.demo@example.test" />
+                                android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
@@ -262,8 +258,7 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_perfil_direccion"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Av. Demostración 123" />
+                            android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -275,8 +270,7 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_perfil_emergencia"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Ana López - +00 555 010 2027" />
+                            android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
@@ -317,7 +311,6 @@
                             android:id="@+id/edit_perfil_alergias"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Alergia ficticia registrada (Penicilina / AINEs)"
                             android:textColor="#C62828"
                             android:textStyle="bold" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -338,8 +331,7 @@
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_perfil_condiciones"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Antecedente ficticio" />
+                                android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -352,8 +344,7 @@
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_perfil_grupo_sang"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="O+" />
+                                android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
@@ -374,8 +365,7 @@
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_perfil_peso"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="62 kg" />
+                                android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -388,8 +378,7 @@
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_perfil_altura"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="165 cm" />
+                                android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
@@ -403,8 +392,7 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_perfil_notas"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Notas ficticias para demostración. No usar en atención real." />
+                            android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
