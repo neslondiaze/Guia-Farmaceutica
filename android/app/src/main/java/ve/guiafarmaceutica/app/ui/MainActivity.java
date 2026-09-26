@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             holder.icon.setImageResource(cat.iconRes);
             holder.itemView.setOnClickListener(v -> {
                 if ("cat_impresion_diagnostica".equalsIgnoreCase(cat.type)) {
-                    v.getContext().startActivity(new Intent(v.getContext(), GestionClinicaActivity.class));
+                    v.getContext().startActivity(new Intent(v.getContext(), CrearImpresionActivity.class));
                 } else if ("cat_settings".equalsIgnoreCase(cat.type)) {
                     v.getContext().startActivity(new Intent(v.getContext(), SettingsActivity.class));
                 } else {

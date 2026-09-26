@@ -40,10 +40,14 @@ public class AsistenteAiCore {
                 // Probar con segundo término si existe
                 if (palabrasClave.size() > 1) {
                     repo.buscar(palabrasClave.get(1), 10, 0, datos2 -> {
-                        callback.alCompletar(datos2, "Sugerencias de referencia según catálogo local.");
+                        if (datos2 != null && !datos2.isEmpty()) {
+                            callback.alCompletar(datos2, "Sugerencias de referencia según catálogo local.");
+                        } else {
+                            callback.alCompletar(new ArrayList<>(), "No se encontraron coincidencias directas en la Guía Farmacéutica local. Favor revisar la guía de medicamentos.");
+                        }
                     });
                 } else {
-                    callback.alCompletar(new ArrayList<>(), "No se encontraron coincidencias directas en la Guía Farmacéutica local.");
+                    callback.alCompletar(new ArrayList<>(), "No se encontraron coincidencias directas en la Guía Farmacéutica local. Favor revisar la guía de medicamentos.");
                 }
             }
         });
@@ -51,6 +55,10 @@ public class AsistenteAiCore {
 
     private static List<String> extraerTerminosClave(String texto) {
         List<String> terminos = new ArrayList<>();
+        if (texto.contains("cefalea") || texto.contains("migrañ") || texto.contains("cabeza")) {
+            terminos.add("acetaminofen");
+            terminos.add("ibuprofeno");
+        }
         if (texto.contains("amigdalit") || texto.contains("infecc") || texto.contains("bacteri")) {
             terminos.add("amoxicilina");
             terminos.add("ampicilina");

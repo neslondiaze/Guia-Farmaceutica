@@ -74,7 +74,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                app:cardElevation="1dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -86,7 +88,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1. Identificación del Paciente"
-                        android:textColor="@color/azul_clinico"
+                        android:textColor="#0F4C81"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -164,13 +166,15 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Card 2: Medicamentos de Referencia Diagnóstica -->
+            <!-- Card 2: Medicamentos (Modelo de Referencia con Botón [+]) -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                app:cardElevation="1dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -178,26 +182,50 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="2. Medicamentos de Referencia Diagnóstica"
-                        android:textColor="@color/azul_clinico"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Medicamentos"
+                            android:textColor="#0F4C81"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_agregar_nuevo_med"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="48dp"
+                            android:layout_height="40dp"
+                            app:backgroundTint="#E6F4EA"
+                            app:cornerRadius="20dp"
+                            app:icon="@android:drawable/ic_input_add"
+                            app:iconGravity="textStart"
+                            app:iconTint="#137333"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:insetLeft="0dp"
+                            android:insetRight="0dp" />
+
+                    </LinearLayout>
 
                     <TextView
-                        android:id="@+id/text_empty_prescripciones"
+                        android:id="@+id/text_empty_medicamentos_referencia"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:gravity="center"
-                        android:text="No hay medicamentos de referencia agregados aún."
+                        android:text="No hay medicamentos agregados aún."
                         android:textColor="#9E9E9E"
                         android:textSize="13sp" />
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_prescripciones"
+                        android:id="@+id/recycler_medicamentos_referencia"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
@@ -207,13 +235,17 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Card 3: Formulario para Agregar Medicamento de Referencia -->
+            <!-- Card Formulario Oculto/Desplegable para Agregar Fármaco -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_form_agregar_med"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:visibility="gone"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                app:cardElevation="1dp"
+                app:strokeColor="#CBD5E1"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -224,31 +256,22 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Agregar Medicamento de Referencia"
-                        android:textColor="@color/azul_clinico"
-                        android:textSize="16sp"
+                        android:text="Agregar Medicamento *"
+                        android:textColor="#0F4C81"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="Medicamento / Presentación Comercial">
+                        android:layout_marginTop="10dp"
+                        android:hint="MEDICAMENTO *">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_impresion_med_nombre"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
-
-                    <Button
-                        android:id="@+id/btn_abrir_calculadora_impresion"
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Calcular Dosis Segura"
-                        app:icon="@drawable/ic_search_catalog" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -259,10 +282,46 @@
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginEnd="6dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="4dp"
                             android:layout_weight="1"
-                            android:hint="Dosis (ej: 1 comp / 5 ml)">
+                            android:hint="PRESENTACIÓN">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edit_impresion_presentacion"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight="1"
+                            android:hint="CONCENTRACIÓN">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edit_impresion_concentracion"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="4dp"
+                            android:layout_weight="1"
+                            android:hint="DOSIS">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_impresion_dosis"
@@ -273,10 +332,10 @@
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="10dp"
                             android:layout_weight="1"
-                            android:hint="Frecuencia (ej: c/8h)">
+                            android:hint="FRECUENCIA">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_impresion_frecuencia"
@@ -289,8 +348,8 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="Duración del tratamiento (ej: por 5 días)">
+                        android:layout_marginTop="10dp"
+                        android:hint="DURACIÓN TRATAMIENTO">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_impresion_duracion"
@@ -299,24 +358,35 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <Button
+                        android:id="@+id/btn_abrir_calculadora_impresion"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Calcular Dosis con Calculadora Segura"
+                        app:icon="@drawable/ic_search_catalog" />
+
+                    <Button
                         android:id="@+id/btn_agregar_item_impresion"
                         style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="＋ Agregar Fármaco de Referencia" />
+                        android:layout_marginTop="8dp"
+                        android:text="＋ Agregar Fármaco a la Lista" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Card 4: Opciones de Emisión e Indicaciones al Paciente -->
+            <!-- Card 3: Observaciones -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                app:cardElevation="1dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -324,36 +394,59 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="OBSERVACIONES"
+                        android:textColor="#0F4C81"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Recomendaciones Clínicas / Observaciones">
+                        android:layout_marginTop="8dp"
+                        android:hint="Observaciones exclusivamente ficticias">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edit_impresion_observaciones"
+                            android:id="@+id/edit_recipe_observaciones"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="100dp"
+                            android:gravity="top|start"
+                            android:inputType="textMultiLine" />
                     </com.google.android.material.textfield.TextInputLayout>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="✨ Sugerencia generada por IA en base al catálogo local. Requiere verificación del profesional de la salud."
-                        android:textColor="#475569"
-                        android:textSize="11sp"
-                        android:textStyle="italic" />
-
-                    <Button
-                        android:id="@+id/btn_generar_pdf_impresion"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Generar Ficha de Impresión Diagnóstica PDF" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Botones Inferiores: Guardar Borrador & Revisar Vista Previa -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_guardar_borrador_impresion"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:text="Guardar borrador" />
+
+                <Button
+                    android:id="@+id/btn_generar_pdf_impresion"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#0F4C81"
+                    android:text="Revisar vista previa"
+                    android:textColor="@android:color/white" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

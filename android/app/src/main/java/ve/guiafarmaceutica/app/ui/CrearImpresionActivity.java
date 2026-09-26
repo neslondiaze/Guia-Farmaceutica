@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,12 +38,13 @@ public class CrearImpresionActivity extends AppCompatActivity {
     public static final String EXTRA_DOSIS = "extra_dosis";
 
     private TextInputEditText editPacienteNombre, editPacienteCedula, editPacienteEdad, editPacienteDiagnostico;
-    private TextInputEditText editMedNombre, editDosis, editFrecuencia, editDuracion, editObservaciones;
-    private TextView textEmptyPrescripciones;
+    private TextInputEditText editMedNombre, editPresentacion, editConcentracion, editDosis, editFrecuencia, editDuracion, editObservaciones;
+    private TextView textEmptyMedicamentosReferencia;
+    private View cardFormAgregar;
 
-    private RecyclerView recyclerPrescripciones;
-    private PrescripcionAdapter adapter;
-    private final List<ImpresionDetalle> listaPrescripciones = new ArrayList<>();
+    private RecyclerView recyclerMedicamentosReferencia;
+    private MedicamentoReferenciaAdapter adapter;
+    private final List<ImpresionDetalle> listaMedicamentosReferencia = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,17 +74,30 @@ public class CrearImpresionActivity extends AppCompatActivity {
         editPacienteDiagnostico = findViewById(R.id.edit_paciente_diagnostico);
 
         editMedNombre = findViewById(R.id.edit_impresion_med_nombre);
+        editPresentacion = findViewById(R.id.edit_impresion_presentacion);
+        editConcentracion = findViewById(R.id.edit_impresion_concentracion);
         editDosis = findViewById(R.id.edit_impresion_dosis);
         editFrecuencia = findViewById(R.id.edit_impresion_frecuencia);
         editDuracion = findViewById(R.id.edit_impresion_duracion);
-        editObservaciones = findViewById(R.id.edit_impresion_observaciones);
+        editObservaciones = findViewById(R.id.edit_recipe_observaciones);
 
-        textEmptyPrescripciones = findViewById(R.id.text_empty_prescripciones);
-        recyclerPrescripciones = findViewById(R.id.recycler_prescripciones);
+        textEmptyMedicamentosReferencia = findViewById(R.id.text_empty_medicamentos_referencia);
+        recyclerMedicamentosReferencia = findViewById(R.id.recycler_medicamentos_referencia);
+        cardFormAgregar = findViewById(R.id.card_form_agregar_med);
+        if (cardFormAgregar != null) {
+            cardFormAgregar.setVisibility(View.GONE);
+        }
 
-        recyclerPrescripciones.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PrescripcionAdapter();
-        recyclerPrescripciones.setAdapter(adapter);
+        recyclerMedicamentosReferencia.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new MedicamentoReferenciaAdapter();
+        recyclerMedicamentosReferencia.setAdapter(adapter);
+
+        Button btnAgregarPlus = findViewById(R.id.btn_agregar_nuevo_med);
+        if (btnAgregarPlus != null && cardFormAgregar != null) {
+            btnAgregarPlus.setOnClickListener(v -> {
+                cardFormAgregar.setVisibility(cardFormAgregar.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            });
+        }
 
         Button btnEvaluarAi = findViewById(R.id.btn_evaluar_diagnostico_ai);
         btnEvaluarAi.setOnClickListener(v -> evaluarConIA());
@@ -98,8 +113,13 @@ public class CrearImpresionActivity extends AppCompatActivity {
         Button btnAgregarFarmaco = findViewById(R.id.btn_agregar_item_impresion);
         btnAgregarFarmaco.setOnClickListener(v -> agregarFarmacoActual());
 
+        Button btnBorrador = findViewById(R.id.btn_guardar_borrador_impresion);
+        if (btnBorrador != null) {
+            btnBorrador.setOnClickListener(v -> guardarImpresion("Borrador"));
+        }
+
         Button btnGenerarPdf = findViewById(R.id.btn_generar_pdf_impresion);
-        btnGenerarPdf.setOnClickListener(v -> generarImpresion());
+        btnGenerarPdf.setOnClickListener(v -> guardarImpresion("Emitido"));
     }
 
     private void evaluarConIA() {
@@ -113,19 +133,34 @@ public class CrearImpresionActivity extends AppCompatActivity {
 
         AsistenteAiCore.evaluarImpresionDiagnostica(this, diagnostico, (sugeridos, resumen) -> {
             if (sugeridos != null && !sugeridos.isEmpty()) {
-                for (FichaClinica med : sugeridos) {
-                    ImpresionDetalle d = new ImpresionDetalle();
-                    d.medicamento_nombre = med.nombre;
-                    d.dosificacion = "Según indicación médica";
-                    d.frecuencia_instrucciones = "cada 8 a 12 horas";
-                    d.duracion_dias = "5 a 7 días";
-                    listaPrescripciones.add(d);
+                CharSequence[] nombresSugeridos = new CharSequence[sugeridos.size()];
+                for (int i = 0; i < sugeridos.size(); i++) {
+                    FichaClinica f = sugeridos.get(i);
+                    nombresSugeridos[i] = "➕ [Agregar] " + f.nombre + (f.forma != null ? " (" + f.forma + ")" : "");
                 }
-                adapter.notifyDataSetChanged();
-                textEmptyPrescripciones.setVisibility(listaPrescripciones.isEmpty() ? View.VISIBLE : View.GONE);
-                Toast.makeText(this, "IA: Se agregaron " + sugeridos.size() + " medicamentos de referencia.", Toast.LENGTH_LONG).show();
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Medicamentos Sugeridos (Toque para agregar)")
+                        .setItems(nombresSugeridos, (dialog, which) -> {
+                            FichaClinica med = sugeridos.get(which);
+                            ImpresionDetalle d = new ImpresionDetalle();
+                            d.medicamento_id = med.id;
+                            d.medicamento_nombre = med.nombre;
+                            d.presentacion = med.forma != null ? med.forma : "Ejemplo";
+                            d.concentracion = med.atc_descripcion != null ? med.atc_descripcion : "Ficticia";
+                            d.dosificacion = "Según ejemplo";
+                            d.frecuencia_instrucciones = "c/8h";
+                            d.duracion_dias = "7 días";
+
+                            listaMedicamentosReferencia.add(d);
+                            adapter.notifyDataSetChanged();
+                            textEmptyMedicamentosReferencia.setVisibility(listaMedicamentosReferencia.isEmpty() ? View.VISIBLE : View.GONE);
+                            Toast.makeText(this, "Medicamento agregado: " + med.nombre, Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("Cerrar", null)
+                        .show();
             } else {
-                Toast.makeText(this, "IA: " + resumen, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, resumen, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -137,43 +172,51 @@ public class CrearImpresionActivity extends AppCompatActivity {
             return;
         }
 
+        String presentacion = editPresentacion.getText().toString().trim();
+        String concentracion = editConcentracion.getText().toString().trim();
         String dosis = editDosis.getText().toString().trim();
-        String frec = editFrecuencia.getText().toString().trim();
-        String dur = editDuracion.getText().toString().trim();
+        String frecuencia = editFrecuencia != null && editFrecuencia.getText() != null ? editFrecuencia.getText().toString().trim() : "";
+        String duracion = editDuracion != null && editDuracion.getText() != null ? editDuracion.getText().toString().trim() : "";
 
         ImpresionDetalle d = new ImpresionDetalle();
         d.medicamento_nombre = medNombre;
-        d.dosificacion = dosis.isEmpty() ? "Dosis según indicación" : dosis;
-        d.frecuencia_instrucciones = frec.isEmpty() ? "cada 8 horas" : frec;
-        d.duracion_dias = dur.isEmpty() ? "5 días" : dur;
+        d.presentacion = presentacion.isEmpty() ? "Ejemplo" : presentacion;
+        d.concentracion = concentracion.isEmpty() ? "Ficticia" : concentracion;
+        d.dosificacion = dosis.isEmpty() ? "Según ejemplo" : dosis;
+        d.frecuencia_instrucciones = frecuencia.isEmpty() ? "c/8h" : frecuencia;
+        d.duracion_dias = duracion.isEmpty() ? "7 días" : duracion;
 
-        listaPrescripciones.add(d);
+        listaMedicamentosReferencia.add(d);
         adapter.notifyDataSetChanged();
-        textEmptyPrescripciones.setVisibility(listaPrescripciones.isEmpty() ? View.VISIBLE : View.GONE);
+        textEmptyMedicamentosReferencia.setVisibility(listaMedicamentosReferencia.isEmpty() ? View.VISIBLE : View.GONE);
 
-        // Limpiar campos para el siguiente fármaco
+        // Limpiar campos
         editMedNombre.setText("");
+        editPresentacion.setText("");
+        editConcentracion.setText("");
         editDosis.setText("");
-        editFrecuencia.setText("");
-        editDuracion.setText("");
-        Toast.makeText(this, "Fármaco de referencia agregado", Toast.LENGTH_SHORT).show();
+        if (editFrecuencia != null) editFrecuencia.setText("");
+        if (editDuracion != null) editDuracion.setText("");
+        if (cardFormAgregar != null) {
+            cardFormAgregar.setVisibility(View.GONE);
+        }
+        Toast.makeText(this, "Fármaco agregado a la lista", Toast.LENGTH_SHORT).show();
     }
 
-    private void generarImpresion() {
-        // Si hay texto en los campos de adición, agregarlo antes de emitir
+    private void guardarImpresion(String estado) {
         String medNombre = editMedNombre.getText().toString().trim();
         if (!medNombre.isEmpty()) {
             agregarFarmacoActual();
         }
 
-        if (listaPrescripciones.isEmpty()) {
-            Toast.makeText(this, "Agregue al menos un medicamento de referencia a la impresión", Toast.LENGTH_SHORT).show();
+        if (listaMedicamentosReferencia.isEmpty()) {
+            Toast.makeText(this, "Agregue al menos un medicamento a la impresión diagnóstica", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String pacienteNombre = editPacienteNombre.getText().toString().trim();
         if (pacienteNombre.isEmpty()) {
-            pacienteNombre = "Paciente Consulta";
+            pacienteNombre = "María López";
         }
 
         ImpresionDiagnostica impresion = new ImpresionDiagnostica();
@@ -182,6 +225,7 @@ public class CrearImpresionActivity extends AppCompatActivity {
         impresion.paciente_edad = editPacienteEdad.getText().toString().trim();
         impresion.diagnostico = CryptoHelper.cifrar(editPacienteDiagnostico.getText().toString().trim());
         impresion.observaciones = editObservaciones.getText().toString().trim();
+        impresion.estado = estado;
         impresion.fecha_creacion = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
         final String finalPacienteNombre = pacienteNombre;
@@ -192,28 +236,36 @@ public class CrearImpresionActivity extends AppCompatActivity {
             try {
                 long impresionId = AppDatabase.obtener(this).impresionDao().insertarImpresion(impresion);
                 impresion.id = impresionId;
-                for (ImpresionDetalle d : listaPrescripciones) {
+                for (ImpresionDetalle d : listaMedicamentosReferencia) {
                     d.impresion_id = impresionId;
                 }
-                AppDatabase.obtener(this).impresionDao().insertarDetalles(listaPrescripciones);
-
-                ImpresionDiagnostica impresionClara = new ImpresionDiagnostica();
-                impresionClara.id = impresionId;
-                impresionClara.paciente_nombre = finalPacienteNombre;
-                impresionClara.paciente_cedula = finalPacienteCedula;
-                impresionClara.paciente_edad = impresion.paciente_edad;
-                impresionClara.diagnostico = finalDiagnostico;
-                impresionClara.observaciones = impresion.observaciones;
-                impresionClara.fecha_creacion = impresion.fecha_creacion;
-
-                File pdfFile = ImpresionPdfHelper.generarPdfImpresion(this, impresionClara, listaPrescripciones);
+                AppDatabase.obtener(this).impresionDao().insertarDetalles(listaMedicamentosReferencia);
 
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "Ficha de Impresión Diagnóstica PDF generada exitosamente", Toast.LENGTH_SHORT).show();
-                    compartirPdf(pdfFile);
+                    if ("Borrador".equalsIgnoreCase(estado)) {
+                        Toast.makeText(this, "Borrador de impresión diagnóstica guardado exitosamente", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        ImpresionDiagnostica impresionClara = new ImpresionDiagnostica();
+                        impresionClara.id = impresionId;
+                        impresionClara.paciente_nombre = finalPacienteNombre;
+                        impresionClara.paciente_cedula = finalPacienteCedula;
+                        impresionClara.paciente_edad = impresion.paciente_edad;
+                        impresionClara.diagnostico = finalDiagnostico;
+                        impresionClara.observaciones = impresion.observaciones;
+                        impresionClara.fecha_creacion = impresion.fecha_creacion;
+
+                        try {
+                            File pdfFile = ImpresionPdfHelper.generarPdfImpresion(this, impresionClara, listaMedicamentosReferencia);
+                            Toast.makeText(this, "Ficha de Impresión Diagnóstica PDF generada exitosamente", Toast.LENGTH_SHORT).show();
+                            compartirPdf(pdfFile);
+                        } catch (Exception ex) {
+                            Toast.makeText(this, "Error al generar PDF: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
                 });
             } catch (Exception e) {
-                runOnUiThread(() -> Toast.makeText(this, "Error al generar PDF: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> Toast.makeText(this, "Error al guardar impresión: " + e.getMessage(), Toast.LENGTH_LONG).show());
             }
         }).start();
     }
@@ -231,7 +283,7 @@ public class CrearImpresionActivity extends AppCompatActivity {
         }
     }
 
-    class PrescripcionAdapter extends RecyclerView.Adapter<PrescripcionAdapter.ViewHolder> {
+    class MedicamentoReferenciaAdapter extends RecyclerView.Adapter<MedicamentoReferenciaAdapter.ViewHolder> {
 
         @NonNull
         @Override
@@ -242,33 +294,41 @@ public class CrearImpresionActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            ImpresionDetalle d = listaPrescripciones.get(position);
-            holder.bind(d, position);
+            ImpresionDetalle d = listaMedicamentosReferencia.get(position);
+            holder.bind(d);
         }
 
         @Override
         public int getItemCount() {
-            return listaPrescripciones.size();
+            return listaMedicamentosReferencia.size();
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView nombre, indicaciones;
+            TextView nombre, presentacion, concentracion, dosis;
             ImageButton btnEliminar;
 
             ViewHolder(View view) {
                 super(view);
                 nombre = view.findViewById(R.id.text_item_med_nombre);
-                indicaciones = view.findViewById(R.id.text_item_indicaciones);
-                btnEliminar = view.findViewById(R.id.btn_eliminar_item_prescripcion);
+                presentacion = view.findViewById(R.id.text_item_presentacion);
+                concentracion = view.findViewById(R.id.text_item_concentracion);
+                dosis = view.findViewById(R.id.text_item_dosis);
+                btnEliminar = view.findViewById(R.id.btn_eliminar_medicamento_referencia);
             }
 
-            void bind(ImpresionDetalle d, int pos) {
-                nombre.setText((pos + 1) + ". " + d.medicamento_nombre);
-                indicaciones.setText("Dosis: " + d.dosificacion + " " + d.frecuencia_instrucciones + " (Durante " + d.duracion_dias + ")");
+            void bind(ImpresionDetalle d) {
+                nombre.setText(d.medicamento_nombre);
+                presentacion.setText(d.presentacion != null ? d.presentacion : "-");
+                concentracion.setText(d.concentracion != null ? d.concentracion : "-");
+                dosis.setText(d.dosificacion != null ? d.dosificacion : "-");
                 btnEliminar.setOnClickListener(v -> {
-                    listaPrescripciones.remove(pos);
-                    notifyDataSetChanged();
-                    textEmptyPrescripciones.setVisibility(listaPrescripciones.isEmpty() ? View.VISIBLE : View.GONE);
+                    int adapterPos = getBindingAdapterPosition();
+                    if (adapterPos != RecyclerView.NO_POSITION && adapterPos < listaMedicamentosReferencia.size()) {
+                        listaMedicamentosReferencia.remove(adapterPos);
+                        notifyItemRemoved(adapterPos);
+                        notifyItemRangeChanged(adapterPos, listaMedicamentosReferencia.size());
+                        textEmptyMedicamentosReferencia.setVisibility(listaMedicamentosReferencia.isEmpty() ? View.VISIBLE : View.GONE);
+                    }
                 });
             }
         }
