@@ -128,7 +128,8 @@ public class CrearImpresionActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Evaluando diagnóstico e identificando medicamentos de referencia...", Toast.LENGTH_SHORT).show();
 
-        AsistenteAiCore.evaluarImpresionDiagnostica(this, diagnostico, (sugeridos, resumen) -> {
+        String edad = editPacienteEdad != null ? editPacienteEdad.getText().toString().trim() : "";
+        AsistenteAiCore.evaluarImpresionDiagnostica(this, diagnostico, edad, (sugeridos, resumen) -> {
             if (sugeridos != null && !sugeridos.isEmpty()) {
                 View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_sugerencias_ai, null);
                 RecyclerView recyclerDialog = dialogView.findViewById(R.id.recycler_sugerencias_ai_dialog);

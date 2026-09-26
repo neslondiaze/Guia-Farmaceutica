@@ -14,18 +14,19 @@ public class AsistenteAiCore {
     }
 
     /**
-     * Evalúa la Impresión Diagnóstica ingresada por el médico (RAG On-Device).
+     * Evalúa la Impresión Diagnóstica ingresada por el médico (RAG On-Device) con análisis semántico y reglas pediátricas.
      */
-    public static void evaluarImpresionDiagnostica(Context context, String impresionDiagnostica, CallbackEvaluacionAi callback) {
+    public static void evaluarImpresionDiagnostica(Context context, String impresionDiagnostica, String edadPacienteStr, CallbackEvaluacionAi callback) {
         if (impresionDiagnostica == null || impresionDiagnostica.trim().isEmpty()) {
             callback.alCompletar(new ArrayList<>(), "Ingrese un cuadro clínico para evaluación.");
             return;
         }
 
+        boolean isPediatric = parsearEdadEsPediatrica(edadPacienteStr);
         String texto = impresionDiagnostica.toLowerCase();
         MedicamentoRepository repo = new MedicamentoRepository(context);
 
-        // Extraer palabras clave clínicas
+        // Extraer palabras clave clínicas semánticas
         List<String> palabrasClave = extraerTerminosClave(texto);
         if (palabrasClave.isEmpty()) {
             palabrasClave.add(impresionDiagnostica.trim());
@@ -33,15 +34,19 @@ public class AsistenteAiCore {
 
         String terminoBusqueda = palabrasClave.get(0);
 
-        repo.buscar(terminoBusqueda, 10, 0, datos -> {
+        repo.buscar(terminoBusqueda, 20, 0, datos -> {
             if (datos != null && !datos.isEmpty()) {
-                callback.alCompletar(datos, "Sugerencias de referencia según catálogo local para: " + terminoBusqueda);
+                List<FichaClinica> procesados = filtrarYOrdenarPorRelevanciaYEdad(datos, isPediatric);
+                String mensaje = isPediatric 
+                        ? "IA (Pediátrico < 12 años): Sugerencias priorizadas (jarabes/suspensiones/gotas) para: " + terminoBusqueda 
+                        : "Sugerencias de referencia según catálogo local para: " + terminoBusqueda;
+                callback.alCompletar(procesados, mensaje);
             } else {
-                // Probar con segundo término si existe
                 if (palabrasClave.size() > 1) {
-                    repo.buscar(palabrasClave.get(1), 10, 0, datos2 -> {
+                    repo.buscar(palabrasClave.get(1), 20, 0, datos2 -> {
                         if (datos2 != null && !datos2.isEmpty()) {
-                            callback.alCompletar(datos2, "Sugerencias de referencia según catálogo local.");
+                            List<FichaClinica> procesados2 = filtrarYOrdenarPorRelevanciaYEdad(datos2, isPediatric);
+                            callback.alCompletar(procesados2, "Sugerencias de referencia según catálogo local.");
                         } else {
                             callback.alCompletar(new ArrayList<>(), "No se encontraron coincidencias directas en la Guía Farmacéutica local. Favor revisar la guía de medicamentos.");
                         }
@@ -51,6 +56,43 @@ public class AsistenteAiCore {
                 }
             }
         });
+    }
+
+    private static boolean parsearEdadEsPediatrica(String edadStr) {
+        if (edadStr == null || edadStr.trim().isEmpty()) {
+            return false;
+        }
+        try {
+            String limpio = edadStr.replaceAll("[^0-9]", "");
+            if (!limpio.isEmpty()) {
+                int edad = Integer.parseInt(limpio);
+                if (edadStr.toLowerCase().contains("mes") || edad < 12) {
+                    return true;
+                }
+            }
+        } catch (Exception ignored) {}
+        return false;
+    }
+
+    private static List<FichaClinica> filtrarYOrdenarPorRelevanciaYEdad(List<FichaClinica> lista, boolean isPediatric) {
+        if (!isPediatric || lista == null) {
+            return lista;
+        }
+        List<FichaClinica> pediatricos = new ArrayList<>();
+        List<FichaClinica> otros = new ArrayList<>();
+
+        for (FichaClinica f : lista) {
+            String forma = f.forma != null ? f.forma.toLowerCase() : "";
+            String nombre = f.nombre != null ? f.nombre.toLowerCase() : "";
+            if (forma.contains("suspens") || forma.contains("jarabe") || forma.contains("gota") || forma.contains("soluci") || forma.contains("oral") ||
+                nombre.contains("suspens") || nombre.contains("jarabe") || nombre.contains("gota") || nombre.contains("pediatric")) {
+                pediatricos.add(f);
+            } else {
+                otros.add(f);
+            }
+        }
+        pediatricos.addAll(otros);
+        return pediatricos;
     }
 
     private static List<String> extraerTerminosClave(String texto) {
