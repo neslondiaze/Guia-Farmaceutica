@@ -102,6 +102,7 @@
             android:id="@+id/container_ayuda"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
             android:padding="16dp"
             android:visibility="gone">
 
@@ -110,51 +111,350 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <!-- Header Card: Centro de Ayuda -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    app:cardBackgroundColor="@color/azul_clinico"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="20dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Guía Farmacéutica Venezuela"
-                            android:textColor="@color/azul_clinico"
-                            android:textSize="20sp"
+                            android:text="Centro de ayuda"
+                            android:textColor="@android:color/white"
+                            android:textSize="22sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Base de datos de consulta offline de medicamentos autorizados y comercializados en Venezuela."
-                            android:textColor="@color/texto_secundario"
+                            android:layout_marginTop="6dp"
+                            android:text="Todo lo que puedes hacer en Guía Farmacéutica"
+                            android:textColor="#E2E8F0"
                             android:textSize="14sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:text="• Total de Medicamentos: 7,057\n• Monografías Clínicas: 1,270\n• Laboratorios Registrados: 136\n• Vías de Administración: 48\n• Formas Farmacéuticas: 107\n• Búsqueda FTS5 de alta velocidad offline"
-                            android:textColor="#424242"
-                            android:textSize="13sp" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- 1. Búsqueda Avanzada y FTS5 -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="1dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:contentDescription="Búsqueda"
+                            android:src="@drawable/ic_search_catalog"
+                            app:tint="#0F4C81" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Búsqueda Avanzada y FTS5"
+                                android:textColor="#1E293B"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Busca entre más de 7,000 medicamentos en Venezuela. Utiliza el motor FTS5 de alta velocidad offline para encontrar principios activos, laboratorios y formas farmacéuticas."
+                                android:textColor="#64748B"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 2. Evaluación e Impresión Diagnóstica -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:contentDescription="Impresión diagnóstica"
+                            android:src="@drawable/ic_cat_science"
+                            app:tint="#0F4C81" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Evaluación e Impresión Diagnóstica"
+                                android:textColor="#1E293B"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Genera récipes médicos e indicaciones médicas en PDF de dos páginas con datos del paciente, medicamentos indicados, firma, sello y 'Lugar del Sello'."
+                                android:textColor="#64748B"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 3. Calculadora de Dosis Segura -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:contentDescription="Calculadora"
+                            android:src="@drawable/ic_cat_therapy"
+                            app:tint="#0F4C81" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Calculadora de Dosis Segura"
+                                android:textColor="#1E293B"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Valida la posología y calcula la dosificación precisa según el peso, la edad, la forma farmacéutica y la vía de administración."
+                                android:textColor="#64748B"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 4. Gestión Clínica de Pacientes -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:contentDescription="Pacientes"
+                            android:src="@drawable/ic_cat_anatomy"
+                            app:tint="#0F4C81" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Gestión Clínica de Pacientes"
+                                android:textColor="#1E293B"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Administra historiales clínicos y expedientes de pacientes para un seguimiento médico estructurado y seguro."
+                                android:textColor="#64748B"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 5. Monografías y Guía Farmacológica -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:contentDescription="Monografías"
+                            android:src="@drawable/ic_cat_monography"
+                            app:tint="#0F4C81" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Monografías y Guía Farmacológica"
+                                android:textColor="#1E293B"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Consulta la clasificación ATC, indicaciones, contraindicaciones, alertas de seguridad y precauciones en embarazo y lactancia."
+                                android:textColor="#64748B"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 6. Ajustes y Perfil Médico -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:contentDescription="Ajustes"
+                            android:src="@drawable/ic_cat_settings"
+                            app:tint="#0F4C81" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Ajustes y Perfil Médico"
+                                android:textColor="#1E293B"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Configura tu nombre, especialidad, número de MPPS, clínica y dirección para que aparezcan automáticamente en el membrete de todos los reportes PDF."
+                                android:textColor="#64748B"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Aviso Legal y Profesional -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -166,8 +466,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Aviso Legal y Profesional"
-                            android:textColor="@color/azul_clinico"
-                            android:textSize="16sp"
+                            android:textColor="#0F4C81"
+                            android:textSize="15sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -175,7 +475,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:text="La información técnica contenida en esta aplicación está destinada exclusivamente a profesionales de la salud (médicos, farmacéuticos y enfermeros). No sustituye el juicio ni la prescripción médica profesional."
-                            android:textColor="@color/texto_secundario"
+                            android:textColor="#64748B"
                             android:textSize="13sp" />
 
                     </LinearLayout>
