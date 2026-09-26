@@ -133,32 +133,33 @@ public class CrearImpresionActivity extends AppCompatActivity {
 
         AsistenteAiCore.evaluarImpresionDiagnostica(this, diagnostico, (sugeridos, resumen) -> {
             if (sugeridos != null && !sugeridos.isEmpty()) {
-                CharSequence[] nombresSugeridos = new CharSequence[sugeridos.size()];
-                for (int i = 0; i < sugeridos.size(); i++) {
-                    FichaClinica f = sugeridos.get(i);
-                    nombresSugeridos[i] = "➕ [Agregar] " + f.nombre + (f.forma != null ? " (" + f.forma + ")" : "");
-                }
+                View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_sugerencias_ai, null);
+                RecyclerView recyclerDialog = dialogView.findViewById(R.id.recycler_sugerencias_ai_dialog);
+                recyclerDialog.setLayoutManager(new LinearLayoutManager(this));
 
-                new AlertDialog.Builder(this)
-                        .setTitle("Medicamentos Sugeridos (Toque para agregar)")
-                        .setItems(nombresSugeridos, (dialog, which) -> {
-                            FichaClinica med = sugeridos.get(which);
-                            ImpresionDetalle d = new ImpresionDetalle();
-                            d.medicamento_id = med.id;
-                            d.medicamento_nombre = med.nombre;
-                            d.presentacion = med.forma != null ? med.forma : "Ejemplo";
-                            d.concentracion = med.atc_descripcion != null ? med.atc_descripcion : "Ficticia";
-                            d.dosificacion = "Según ejemplo";
-                            d.frecuencia_instrucciones = "c/8h";
-                            d.duracion_dias = "7 días";
-
-                            listaMedicamentosReferencia.add(d);
-                            adapter.notifyDataSetChanged();
-                            textEmptyMedicamentosReferencia.setVisibility(listaMedicamentosReferencia.isEmpty() ? View.VISIBLE : View.GONE);
-                            Toast.makeText(this, "Medicamento agregado: " + med.nombre, Toast.LENGTH_SHORT).show();
-                        })
+                AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setView(dialogView)
                         .setNegativeButton("Cerrar", null)
-                        .show();
+                        .create();
+
+                MedicamentoSugeridoAdapter sugAdapter = new MedicamentoSugeridoAdapter(sugeridos, med -> {
+                    ImpresionDetalle d = new ImpresionDetalle();
+                    d.medicamento_id = med.id;
+                    d.medicamento_nombre = med.nombre;
+                    d.presentacion = med.forma != null ? med.forma : "Ejemplo";
+                    d.concentracion = med.atc_descripcion != null ? med.atc_descripcion : "Ficticia";
+                    d.dosificacion = "Según ejemplo";
+                    d.frecuencia_instrucciones = "c/8h";
+                    d.duracion_dias = "7 días";
+
+                    listaMedicamentosReferencia.add(d);
+                    adapter.notifyDataSetChanged();
+                    textEmptyMedicamentosReferencia.setVisibility(listaMedicamentosReferencia.isEmpty() ? View.VISIBLE : View.GONE);
+                    Toast.makeText(this, "Medicamento agregado: " + med.nombre, Toast.LENGTH_SHORT).show();
+                });
+
+                recyclerDialog.setAdapter(sugAdapter);
+                dialog.show();
             } else {
                 Toast.makeText(this, resumen, Toast.LENGTH_LONG).show();
             }
@@ -330,6 +331,56 @@ public class CrearImpresionActivity extends AppCompatActivity {
                         textEmptyMedicamentosReferencia.setVisibility(listaMedicamentosReferencia.isEmpty() ? View.VISIBLE : View.GONE);
                     }
                 });
+            }
+        }
+    }
+
+    class MedicamentoSugeridoAdapter extends RecyclerView.Adapter<MedicamentoSugeridoAdapter.ViewHolder> {
+        private final List<FichaClinica> listaSugeridos;
+        private final OnItemClickListener listener;
+
+        interface OnItemClickListener {
+            void onAgregar(FichaClinica med);
+        }
+
+        MedicamentoSugeridoAdapter(List<FichaClinica> listaSugeridos, OnItemClickListener listener) {
+            this.listaSugeridos = listaSugeridos;
+            this.listener = listener;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sugerencia_ai, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            FichaClinica f = listaSugeridos.get(position);
+            holder.nombre.setText(f.nombre);
+            holder.presentacion.setText(f.forma != null ? f.forma : "Forma farmacéutica estándar");
+            holder.btnAgregar.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onAgregar(f);
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return listaSugeridos.size();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            TextView nombre, presentacion;
+            Button btnAgregar;
+
+            ViewHolder(View view) {
+                super(view);
+                nombre = view.findViewById(R.id.text_sugerencia_nombre);
+                presentacion = view.findViewById(R.id.text_sugerencia_presentacion);
+                btnAgregar = view.findViewById(R.id.btn_sugerencia_agregar);
             }
         }
     }
