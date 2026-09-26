@@ -13,6 +13,7 @@ import java.util.List;
 import ve.guiafarmaceutica.app.R;
 import ve.guiafarmaceutica.app.data.AppDatabase;
 import ve.guiafarmaceutica.app.data.Paciente;
+import ve.guiafarmaceutica.app.repository.SettingsRepository;
 import ve.guiafarmaceutica.app.util.DemoDataHelper;
 
 public class GestionClinicaActivity extends AppCompatActivity {
@@ -41,29 +42,15 @@ public class GestionClinicaActivity extends AppCompatActivity {
         ImageButton btnBack = findViewById(R.id.btn_back);
         btnBack.setOnClickListener(v -> onBackPressed());
 
+        SettingsRepository settings = new SettingsRepository(this);
+        TextView textHeaderClinica = findViewById(R.id.text_header_clinica);
+        if (textHeaderClinica != null) {
+            textHeaderClinica.setText(settings.getMedicoClinica());
+        }
+
         textPacienteNombre = findViewById(R.id.text_paciente_nombre_dash);
         textPacienteSub = findViewById(R.id.text_paciente_sub_dash);
         cardPacienteMaria = findViewById(R.id.card_paciente_maria);
-
-        findViewById(R.id.card_action_impresion).setOnClickListener(v -> {
-            Intent intent = new Intent(this, CrearImpresionActivity.class);
-            if (pacienteMariaId != -1) {
-                intent.putExtra("extra_paciente_id", pacienteMariaId);
-            }
-            startActivity(intent);
-        });
-
-        findViewById(R.id.card_action_indicacion).setOnClickListener(v -> {
-            Intent intent = new Intent(this, CrearIndicacionActivity.class);
-            if (pacienteMariaId != -1) {
-                intent.putExtra("extra_paciente_id", pacienteMariaId);
-            }
-            startActivity(intent);
-        });
-
-        findViewById(R.id.card_action_historial).setOnClickListener(v -> {
-            startActivity(new Intent(this, HistorialImpresionesActivity.class));
-        });
 
         View.OnClickListener abrirFicha = v -> {
             if (pacienteMariaId != -1) {
@@ -99,7 +86,7 @@ public class GestionClinicaActivity extends AppCompatActivity {
                 pacienteMariaId = maria.id;
                 runOnUiThread(() -> {
                     textPacienteNombre.setText(maria.nombre_completo);
-                    textPacienteSub.setText("ID " + maria.identificacion + " · Atención ficticia");
+                    textPacienteSub.setText("ID " + maria.identificacion + " · Expediente clínico");
                 });
             }
         }).start();
@@ -113,7 +100,7 @@ public class GestionClinicaActivity extends AppCompatActivity {
                     Paciente p = resultados.get(0);
                     pacienteMariaId = p.id;
                     textPacienteNombre.setText(p.nombre_completo);
-                    textPacienteSub.setText("ID " + p.identificacion + " · Atención ficticia");
+                    textPacienteSub.setText("ID " + p.identificacion + " · Expediente clínico");
                     cardPacienteMaria.setVisibility(View.VISIBLE);
                 } else {
                     cardPacienteMaria.setVisibility(View.GONE);
