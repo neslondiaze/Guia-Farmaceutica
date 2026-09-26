@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         categories.add(new Category("Seguridad (Embarazo)", R.drawable.ic_cat_security, CategoryViewModel.TYPE_SEGURIDAD));
         categories.add(new Category("Monografías Clínicas", R.drawable.ic_cat_monography, CategoryViewModel.TYPE_MONOGRAFIA));
         categories.add(new Category("Índice Alfabético", R.drawable.ic_cat_alphabet, CategoryViewModel.TYPE_ALFABETICO));
-        categories.add(new Category("Impresión Diagnóstica", R.drawable.ic_cat_monography, "cat_impresion_diagnostica"));
+        categories.add(new Category("Impresión Diagnóstica", R.drawable.ic_cat_recipe, "cat_impresion_diagnostica"));
         categories.add(new Category("Calculadora de Dosis", R.drawable.ic_pill, "cat_calculadora"));
         categories.add(new Category("Gestión de Pacientes", R.drawable.ic_cat_patient, "cat_gestion_pacientes"));
         categories.add(new Category("Configuración", R.drawable.ic_cat_settings, "cat_settings"));

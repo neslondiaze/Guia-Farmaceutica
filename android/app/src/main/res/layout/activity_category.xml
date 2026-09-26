@@ -617,7 +617,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:contentDescription="Impresión Diagnóstica"
-                            android:src="@drawable/ic_cat_monography"
+                            android:src="@drawable/ic_cat_recipe"
                             app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
