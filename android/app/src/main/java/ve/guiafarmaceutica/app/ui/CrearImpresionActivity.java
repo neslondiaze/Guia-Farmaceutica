@@ -28,6 +28,7 @@ import ve.guiafarmaceutica.app.data.AppDatabase;
 import ve.guiafarmaceutica.app.data.FichaClinica;
 import ve.guiafarmaceutica.app.data.ImpresionDiagnostica;
 import ve.guiafarmaceutica.app.data.ImpresionDetalle;
+import ve.guiafarmaceutica.app.data.Paciente;
 import ve.guiafarmaceutica.app.util.AsistenteAiCore;
 import ve.guiafarmaceutica.app.util.CryptoHelper;
 import ve.guiafarmaceutica.app.util.ImpresionPdfHelper;
@@ -217,28 +218,46 @@ public class CrearImpresionActivity extends AppCompatActivity {
         if (pacienteNombre.isEmpty()) {
             pacienteNombre = "María López";
         }
+        String pacienteCedula = editPacienteCedula.getText().toString().trim();
+        String pacienteEdad = editPacienteEdad.getText().toString().trim();
 
         ImpresionDiagnostica impresion = new ImpresionDiagnostica();
         impresion.paciente_nombre = CryptoHelper.cifrar(pacienteNombre);
-        impresion.paciente_cedula = CryptoHelper.cifrar(editPacienteCedula.getText().toString().trim());
-        impresion.paciente_edad = editPacienteEdad.getText().toString().trim();
+        impresion.paciente_cedula = CryptoHelper.cifrar(pacienteCedula);
+        impresion.paciente_edad = pacienteEdad;
         impresion.diagnostico = CryptoHelper.cifrar(editPacienteDiagnostico.getText().toString().trim());
         impresion.observaciones = editObservaciones.getText().toString().trim();
         impresion.estado = "Emitido";
         impresion.fecha_creacion = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
         final String finalPacienteNombre = pacienteNombre;
-        final String finalPacienteCedula = editPacienteCedula.getText().toString().trim();
+        final String finalPacienteCedula = pacienteCedula;
         final String finalDiagnostico = editPacienteDiagnostico.getText().toString().trim();
 
         new Thread(() -> {
             try {
-                long impresionId = AppDatabase.obtener(this).impresionDao().insertarImpresion(impresion);
+                AppDatabase db = AppDatabase.obtener(this);
+
+                // Crear o actualizar el Paciente en la tabla 'pacientes' para que aparezca en Gestión de Pacientes
+                Paciente paciente = null;
+                if (!pacienteCedula.isEmpty()) {
+                    paciente = db.pacienteDao().obtenerPorIdentificacion(pacienteCedula);
+                }
+                if (paciente == null) {
+                    paciente = new Paciente();
+                }
+                paciente.nombre_completo = finalPacienteNombre;
+                paciente.identificacion = !pacienteCedula.isEmpty() ? pacienteCedula : ("ID-" + (System.currentTimeMillis() % 100000));
+                paciente.edad_calculada = !pacienteEdad.isEmpty() ? pacienteEdad : "S/I";
+                long pacienteId = db.pacienteDao().insertar(paciente);
+
+                impresion.paciente_id = pacienteId;
+                long impresionId = db.impresionDao().insertarImpresion(impresion);
                 impresion.id = impresionId;
                 for (ImpresionDetalle d : listaMedicamentosReferencia) {
                     d.impresion_id = impresionId;
                 }
-                AppDatabase.obtener(this).impresionDao().insertarDetalles(listaMedicamentosReferencia);
+                db.impresionDao().insertarDetalles(listaMedicamentosReferencia);
 
                 runOnUiThread(() -> {
                     ImpresionDiagnostica impresionClara = new ImpresionDiagnostica();
