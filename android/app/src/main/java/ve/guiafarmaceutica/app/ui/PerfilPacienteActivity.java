@@ -2,14 +2,12 @@ package ve.guiafarmaceutica.app.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
-import java.util.List;
 import ve.guiafarmaceutica.app.R;
 import ve.guiafarmaceutica.app.data.AppDatabase;
 import ve.guiafarmaceutica.app.data.Paciente;
@@ -83,22 +81,21 @@ public class PerfilPacienteActivity extends AppCompatActivity {
     }
 
     private void cargarDatosPaciente() {
+        if (pacienteId == -1) {
+            runOnUiThread(() -> {
+                textHeaderTitle.setText("Registrar Nuevo Paciente");
+                textHeaderSub.setText("EXPEDIENTE CLÍNICO");
+            });
+            return;
+        }
+
         new Thread(() -> {
             AppDatabase db = AppDatabase.obtener(this);
-            if (pacienteId != -1) {
-                paciente = db.pacienteDao().obtenerPorId(pacienteId);
-            }
-            if (paciente == null) {
-                List<Paciente> lista = db.pacienteDao().listarPacientes();
-                if (lista != null && !lista.isEmpty()) {
-                    paciente = lista.get(0);
-                    pacienteId = paciente.id;
-                }
-            }
+            paciente = db.pacienteDao().obtenerPorId(pacienteId);
 
             if (paciente != null) {
                 runOnUiThread(() -> {
-                    textHeaderSub.setText("PACIENTE FICTICIA: " + paciente.nombre_completo.toUpperCase());
+                    textHeaderSub.setText("EXPEDIENTE CLÍNICO: " + paciente.nombre_completo.toUpperCase());
                     textHeaderTitle.setText(paciente.nombre_completo + " (" + paciente.identificacion + ")");
 
                     editNombre.setText(paciente.nombre_completo);
@@ -124,29 +121,42 @@ public class PerfilPacienteActivity extends AppCompatActivity {
     }
 
     private void guardarCambiosFicha() {
-        if (paciente == null) return;
+        String nombre = editNombre.getText().toString().trim();
+        if (nombre.isEmpty()) {
+            Toast.makeText(this, "Ingrese el nombre del paciente", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        paciente.nombre_completo = editNombre.getText().toString();
-        paciente.identificacion = editId.getText().toString();
-        paciente.fecha_nacimiento = editNac.getText().toString();
-        paciente.edad_calculada = editEdad.getText().toString();
-        paciente.sexo = editSexo.getText().toString();
+        if (paciente == null) {
+            paciente = new Paciente();
+        }
 
-        paciente.telefono = editTelefono.getText().toString();
-        paciente.correo = editCorreo.getText().toString();
-        paciente.direccion = editDireccion.getText().toString();
-        paciente.contacto_emergencia = editEmergencia.getText().toString();
+        paciente.nombre_completo = nombre;
+        paciente.identificacion = editId.getText().toString().trim();
+        paciente.fecha_nacimiento = editNac.getText().toString().trim();
+        paciente.edad_calculada = editEdad.getText().toString().trim();
+        paciente.sexo = editSexo.getText().toString().trim();
 
-        paciente.alergias = editAlergias.getText().toString();
-        paciente.condiciones_relevantes = editCondiciones.getText().toString();
-        paciente.grupo_sanguineo = editGrupoSang.getText().toString();
-        paciente.peso = editPeso.getText().toString();
-        paciente.altura = editAltura.getText().toString();
-        paciente.notas_clinicas = editNotas.getText().toString();
+        paciente.telefono = editTelefono.getText().toString().trim();
+        paciente.correo = editCorreo.getText().toString().trim();
+        paciente.direccion = editDireccion.getText().toString().trim();
+        paciente.contacto_emergencia = editEmergencia.getText().toString().trim();
+
+        paciente.alergias = editAlergias.getText().toString().trim();
+        paciente.condiciones_relevantes = editCondiciones.getText().toString().trim();
+        paciente.grupo_sanguineo = editGrupoSang.getText().toString().trim();
+        paciente.peso = editPeso.getText().toString().trim();
+        paciente.altura = editAltura.getText().toString().trim();
+        paciente.notas_clinicas = editNotas.getText().toString().trim();
 
         new Thread(() -> {
-            AppDatabase.obtener(this).pacienteDao().actualizar(paciente);
-            runOnUiThread(() -> Toast.makeText(this, "Ficha del paciente actualizada exitosamente", Toast.LENGTH_SHORT).show());
+            long idGuardado = AppDatabase.obtener(this).pacienteDao().insertar(paciente);
+            paciente.id = idGuardado;
+            pacienteId = idGuardado;
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Ficha del paciente guardada exitosamente", Toast.LENGTH_SHORT).show();
+                finish();
+            });
         }).start();
     }
 

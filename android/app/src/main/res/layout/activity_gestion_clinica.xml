@@ -70,6 +70,19 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Botón Registrar Nuevo Paciente -->
+            <Button
+                android:id="@+id/btn_nuevo_paciente"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:backgroundTint="#0F4C81"
+                android:text="＋ Registrar Nuevo Paciente"
+                android:textColor="@android:color/white"
+                app:icon="@android:drawable/ic_input_add"
+                app:iconTint="@android:color/white" />
+
             <!-- Buscador de Pacientes -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"

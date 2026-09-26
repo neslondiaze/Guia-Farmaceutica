@@ -57,6 +57,15 @@ public class GestionClinicaActivity extends AppCompatActivity {
             textHeaderClinica.setText(settings.getMedicoClinica());
         }
 
+        View btnNuevo = findViewById(R.id.btn_nuevo_paciente);
+        if (btnNuevo != null) {
+            btnNuevo.setOnClickListener(v -> {
+                Intent intent = new Intent(this, PerfilPacienteActivity.class);
+                intent.putExtra(PerfilPacienteActivity.EXTRA_PACIENTE_ID, -1L);
+                startActivity(intent);
+            });
+        }
+
         recyclerPacientes = findViewById(R.id.recycler_pacientes_recientes);
         textEmptyPacientes = findViewById(R.id.text_empty_pacientes);
 
