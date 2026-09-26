@@ -19,13 +19,19 @@ import ve.guiafarmaceutica.app.repository.SettingsRepository;
 public class ImpresionPdfHelper {
 
     private static String obtenerIndicacionAsociada(int num, ImpresionDetalle d, String observaciones) {
-        String base = "    Dosis: " + (d.dosificacion != null ? d.dosificacion : "-") + " - " + (d.frecuencia_instrucciones != null ? d.frecuencia_instrucciones : "");
+        String base = "    Dosis: " + (d.dosificacion != null && !d.dosificacion.equals("-") && !d.dosificacion.isEmpty() ? d.dosificacion : "Según indicación médica");
+        if (d.frecuencia_instrucciones != null && !d.frecuencia_instrucciones.isEmpty()) {
+            base += " - " + d.frecuencia_instrucciones;
+        }
+
         if (observaciones != null && !observaciones.isEmpty()) {
+            String[] lineas = observaciones.split("\n");
+
             String prefix1 = num + ".";
             String prefix2 = num + ")";
             String prefix3 = num + ":";
             String prefix4 = num + "-";
-            for (String linea : observaciones.split("\n")) {
+            for (String linea : lineas) {
                 linea = linea.trim();
                 String encontrada = null;
                 if (linea.startsWith(prefix1)) encontrada = linea.substring(prefix1.length()).trim();
@@ -37,8 +43,25 @@ public class ImpresionPdfHelper {
                     return "    " + encontrada;
                 }
             }
+
+            int index = num - 1;
+            if (index >= 0 && index < lineas.length) {
+                String lineaPos = lineas[index].trim();
+                if (!lineaPos.isEmpty()) {
+                    if (lineaPos.length() > 2 && Character.isDigit(lineaPos.charAt(0))) {
+                        int spaceIdx = lineaPos.indexOf(' ');
+                        if (spaceIdx != -1 && spaceIdx < 4) {
+                            lineaPos = lineaPos.substring(spaceIdx + 1).trim();
+                        }
+                    }
+                    if (!lineaPos.isEmpty()) {
+                        return "    " + lineaPos;
+                    }
+                }
+            }
         }
-        return base + (d.duracion_dias != null ? " (Duración: " + d.duracion_dias + ")" : "");
+
+        return base;
     }
 
     public static File generarPdfImpresion(Context context, ImpresionDiagnostica impresion, List<ImpresionDetalle> detalles) throws IOException {
