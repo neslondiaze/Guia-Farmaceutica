@@ -21,7 +21,8 @@
             android:id="@+id/category_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_cat_anatomy" />
+            android:src="@drawable/ic_cat_anatomy"
+            app:tint="@color/verde_farmacia" />
 
         <TextView
             android:id="@+id/category_name"
