@@ -57,6 +57,20 @@ public class CrearImpresionActivity extends AppCompatActivity {
 
         setupUI();
 
+        long pacienteId = getIntent().getLongExtra("extra_paciente_id", -1);
+        if (pacienteId != -1) {
+            new Thread(() -> {
+                Paciente p = AppDatabase.obtener(this).pacienteDao().obtenerPorId(pacienteId);
+                if (p != null) {
+                    runOnUiThread(() -> {
+                        if (editPacienteNombre != null) editPacienteNombre.setText(p.nombre_completo);
+                        if (editPacienteCedula != null) editPacienteCedula.setText(p.identificacion);
+                        if (editPacienteEdad != null) editPacienteEdad.setText(p.edad_calculada);
+                    });
+                }
+            }).start();
+        }
+
         if (medNombre != null && !medNombre.isEmpty()) {
             editMedNombre.setText(medNombre);
         }
