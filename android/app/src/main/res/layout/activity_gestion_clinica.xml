@@ -70,24 +70,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Saludo y Titular -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="RESUMEN CLÍNICO"
-                android:textColor="#0F4C81"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Buen día, profesional"
-                android:textColor="#1E293B"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-
             <!-- Buscador de Pacientes -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
