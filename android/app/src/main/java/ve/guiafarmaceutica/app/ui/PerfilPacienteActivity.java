@@ -127,7 +127,17 @@ public class PerfilPacienteActivity extends AppCompatActivity {
 
         if (recyclerImagenes != null) {
             recyclerImagenes.setLayoutManager(new LinearLayoutManager(this));
-            adapterImagenes = new ImagenComplementariaAdapter(listaImagenes, this::eliminarImagenComplementaria);
+            adapterImagenes = new ImagenComplementariaAdapter(listaImagenes, new ImagenComplementariaAdapter.OnItemClickListener() {
+                @Override
+                public void onEliminar(ImagenComplementaria img) {
+                    eliminarImagenComplementaria(img);
+                }
+
+                @Override
+                public void onClick(ImagenComplementaria img) {
+                    mostrarImagenAmpliada(img);
+                }
+            });
             recyclerImagenes.setAdapter(adapterImagenes);
         }
 
@@ -145,6 +155,20 @@ public class PerfilPacienteActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btn_perfil_historial).setOnClickListener(v -> guardarCambiosFicha());
+    }
+
+    private void mostrarImagenAmpliada(ImagenComplementaria img) {
+        if (img.ruta_imagen == null) return;
+        ImageView imageView = new ImageView(this);
+        imageView.setAdjustViewBounds(true);
+        imageView.setPadding(20, 20, 20, 20);
+        Glide.with(this).load(new File(img.ruta_imagen)).into(imageView);
+
+        new AlertDialog.Builder(this)
+                .setTitle(img.descripcion_datos != null ? img.descripcion_datos : "Estudio Complementario")
+                .setView(imageView)
+                .setPositiveButton("Cerrar", null)
+                .show();
     }
 
     private void cargarDatosPaciente() {
@@ -364,6 +388,7 @@ public class PerfilPacienteActivity extends AppCompatActivity {
 
         interface OnItemClickListener {
             void onEliminar(ImagenComplementaria img);
+            void onClick(ImagenComplementaria img);
         }
 
         ImagenComplementariaAdapter(List<ImagenComplementaria> lista, OnItemClickListener listener) {
@@ -384,11 +409,9 @@ public class PerfilPacienteActivity extends AppCompatActivity {
             holder.textDescripcion.setText(item.descripcion_datos != null ? item.descripcion_datos : "Estudio sin nota");
             holder.textFecha.setText("Fecha: " + (item.fecha_registro != null ? item.fecha_registro : "-"));
 
-            if (item.ruta_imagen != null) {
-                Glide.with(holder.itemView.getContext())
-                        .load(new File(item.ruta_imagen))
-                        .into(holder.imgPreview);
-            }
+            holder.itemView.setOnClickListener(v -> {
+                if (listener != null) listener.onClick(item);
+            });
 
             holder.btnEliminar.setOnClickListener(v -> {
                 if (listener != null) listener.onEliminar(item);
@@ -401,13 +424,11 @@ public class PerfilPacienteActivity extends AppCompatActivity {
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
-            ImageView imgPreview;
             TextView textDescripcion, textFecha;
             ImageButton btnEliminar;
 
             ViewHolder(View view) {
                 super(view);
-                imgPreview = view.findViewById(R.id.img_complementaria_preview);
                 textDescripcion = view.findViewById(R.id.text_imagen_descripcion);
                 textFecha = view.findViewById(R.id.text_imagen_fecha);
                 btnEliminar = view.findViewById(R.id.btn_eliminar_imagen_comp);

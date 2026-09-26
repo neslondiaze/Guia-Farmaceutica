@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    app:cardCornerRadius="12dp"
+    android:layout_marginBottom="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="10dp"
     app:cardElevation="1dp"
     app:strokeColor="#E2E8F0"
     app:strokeWidth="1dp">
@@ -12,50 +14,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="14dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="#1E293B">
-
-            <ImageView
-                android:id="@+id/img_complementaria_preview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="Estudio complementario"
-                android:scaleType="centerCrop" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="10dp"
-                app:cardBackgroundColor="#80000000"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="0dp">
-
-                <ImageButton
-                    android:id="@+id/btn_eliminar_imagen_comp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Eliminar estudio"
-                    android:padding="6dp"
-                    android:scaleType="centerInside"
-                    android:src="@android:drawable/ic_menu_delete"
-                    app:tint="@android:color/white" />
-
-            </com.google.android.material.card.MaterialCardView>
-
-        </RelativeLayout>
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:contentDescription="Estudio"
+            android:src="@drawable/ic_cat_patient"
+            app:tint="#0F4C81" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="12dp">
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/text_imagen_descripcion"
@@ -69,11 +44,21 @@
                 android:id="@+id/text_imagen_fecha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="2dp"
                 android:textColor="#64748B"
                 android:textSize="11sp" />
 
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_eliminar_imagen_comp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Eliminar estudio"
+            android:padding="6dp"
+            android:src="@android:drawable/ic_menu_delete"
+            app:tint="#C62828" />
 
     </LinearLayout>
 
