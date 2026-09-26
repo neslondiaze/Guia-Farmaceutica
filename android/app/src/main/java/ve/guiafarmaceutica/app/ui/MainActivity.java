@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         categories.add(new Category("Monografías Clínicas", R.drawable.ic_cat_monography, CategoryViewModel.TYPE_MONOGRAFIA));
         categories.add(new Category("Índice Alfabético", R.drawable.ic_cat_alphabet, CategoryViewModel.TYPE_ALFABETICO));
         categories.add(new Category("Impresión Diagnóstica", R.drawable.ic_cat_monography, "cat_impresion_diagnostica"));
+        categories.add(new Category("Calculadora de Dosis", R.drawable.ic_pill, "cat_calculadora"));
         categories.add(new Category("Gestión de Pacientes", R.drawable.ic_cat_security, "cat_gestion_pacientes"));
         categories.add(new Category("Configuración", R.drawable.ic_cat_settings, "cat_settings"));
         categories.add(new Category("Centro de Ayuda", R.drawable.ic_cat_help, CategoryViewModel.TYPE_AYUDA));
@@ -91,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
             holder.itemView.setOnClickListener(v -> {
                 if ("cat_impresion_diagnostica".equalsIgnoreCase(cat.type)) {
                     v.getContext().startActivity(new Intent(v.getContext(), CrearImpresionActivity.class));
+                } else if ("cat_calculadora".equalsIgnoreCase(cat.type)) {
+                    v.getContext().startActivity(new Intent(v.getContext(), CalculadoraActivity.class));
                 } else if ("cat_gestion_pacientes".equalsIgnoreCase(cat.type)) {
                     v.getContext().startActivity(new Intent(v.getContext(), GestionClinicaActivity.class));
                 } else if ("cat_settings".equalsIgnoreCase(cat.type)) {

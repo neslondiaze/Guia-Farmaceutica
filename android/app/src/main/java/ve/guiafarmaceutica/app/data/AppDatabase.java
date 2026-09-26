@@ -30,8 +30,8 @@ import java.io.OutputStream;
  * contra 7057 filas son instantáneas.</p>
  */
 @Database(
-        entities = {Favorito.class, ImpresionDiagnostica.class, ImpresionDetalle.class, Paciente.class, IndicacionNoFarmacologica.class},
-        version = 4,
+        entities = {Favorito.class, ImpresionDiagnostica.class, ImpresionDetalle.class, Paciente.class, IndicacionNoFarmacologica.class, ImagenComplementaria.class},
+        version = 5,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -58,6 +58,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract PacienteDao pacienteDao();
 
     public abstract IndicacionDao indicacionDao();
+
+    public abstract ImagenComplementariaDao imagenComplementariaDao();
 
     /**
      * Devuelve la instancia única, copiando antes la semilla si hace falta.

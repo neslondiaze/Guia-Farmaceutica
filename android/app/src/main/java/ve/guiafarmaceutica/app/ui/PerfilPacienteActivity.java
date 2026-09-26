@@ -1,17 +1,41 @@
 package ve.guiafarmaceutica.app.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputEditText;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import ve.guiafarmaceutica.app.R;
 import ve.guiafarmaceutica.app.data.AppDatabase;
+import ve.guiafarmaceutica.app.data.ImagenComplementaria;
 import ve.guiafarmaceutica.app.data.Paciente;
 
 public class PerfilPacienteActivity extends AppCompatActivity {
@@ -27,6 +51,29 @@ public class PerfilPacienteActivity extends AppCompatActivity {
     private TextInputEditText editTelefono, editCorreo, editDireccion, editEmergencia;
     private TextInputEditText editAlergias, editCondiciones, editGrupoSang, editPeso, editAltura, editNotas;
 
+    private RecyclerView recyclerImagenes;
+    private TextView textEmptyImagenes;
+    private ImagenComplementariaAdapter adapterImagenes;
+    private final List<ImagenComplementaria> listaImagenes = new ArrayList<>();
+
+    private Uri tempCameraUri;
+
+    private final ActivityResultLauncher<String> galleryLauncher = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri != null) {
+                    procesarImagenSeleccionada(uri);
+                }
+            });
+
+    private final ActivityResultLauncher<Uri> cameraLauncher = registerForActivityResult(
+            new ActivityResultContracts.TakePicture(),
+            exito -> {
+                if (exito && tempCameraUri != null) {
+                    procesarImagenSeleccionada(tempCameraUri);
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +83,12 @@ public class PerfilPacienteActivity extends AppCompatActivity {
 
         setupUI();
         cargarDatosPaciente();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarImagenesComplementarias();
     }
 
     private void setupUI() {
@@ -68,6 +121,20 @@ public class PerfilPacienteActivity extends AppCompatActivity {
         editPeso = findViewById(R.id.edit_perfil_peso);
         editAltura = findViewById(R.id.edit_perfil_altura);
         editNotas = findViewById(R.id.edit_perfil_notas);
+
+        recyclerImagenes = findViewById(R.id.recycler_imagenes_complementarias);
+        textEmptyImagenes = findViewById(R.id.text_empty_imagenes_comp);
+
+        if (recyclerImagenes != null) {
+            recyclerImagenes.setLayoutManager(new LinearLayoutManager(this));
+            adapterImagenes = new ImagenComplementariaAdapter(listaImagenes, this::eliminarImagenComplementaria);
+            recyclerImagenes.setAdapter(adapterImagenes);
+        }
+
+        View btnAgregarImg = findViewById(R.id.btn_agregar_imagen_comp);
+        if (btnAgregarImg != null) {
+            btnAgregarImg.setOnClickListener(v -> abrirOpcionesImagen());
+        }
 
         findViewById(R.id.btn_perfil_nueva_impresion).setOnClickListener(v -> {
             Intent intent = new Intent(this, CrearImpresionActivity.class);
@@ -122,6 +189,135 @@ public class PerfilPacienteActivity extends AppCompatActivity {
         }).start();
     }
 
+    private void cargarImagenesComplementarias() {
+        if (pacienteId == -1) {
+            return;
+        }
+        new Thread(() -> {
+            List<ImagenComplementaria> lista = AppDatabase.obtener(this).imagenComplementariaDao().listarPorPaciente(pacienteId);
+            runOnUiThread(() -> {
+                listaImagenes.clear();
+                if (lista != null) {
+                    listaImagenes.addAll(lista);
+                }
+                if (adapterImagenes != null) {
+                    adapterImagenes.notifyDataSetChanged();
+                }
+                if (textEmptyImagenes != null) {
+                    textEmptyImagenes.setVisibility(listaImagenes.isEmpty() ? View.VISIBLE : View.GONE);
+                }
+            });
+        }).start();
+    }
+
+    private void abrirOpcionesImagen() {
+        if (pacienteId == -1) {
+            Toast.makeText(this, "Guarde primero la ficha del paciente para adjuntar imágenes", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        CharSequence[] opciones = new CharSequence[]{"📷 Tomar Foto (Cámara)", "🖼️ Elegir de Galería"};
+        new AlertDialog.Builder(this)
+                .setTitle("Agregar Imagen / Estudio")
+                .setItems(opciones, (dialog, which) -> {
+                    if (which == 0) {
+                        lanzarCamara();
+                    } else {
+                        galleryLauncher.launch("image/*");
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void lanzarCamara() {
+        try {
+            File photoDir = new File(getFilesDir(), "imagenes_pacientes");
+            if (!photoDir.exists()) photoDir.mkdirs();
+            File tempFile = new File(photoDir, "temp_cam_" + System.currentTimeMillis() + ".jpg");
+            tempCameraUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", tempFile);
+            cameraLauncher.launch(tempCameraUri);
+        } catch (Exception e) {
+            Toast.makeText(this, "Error al abrir la cámara: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void procesarImagenSeleccionada(Uri uri) {
+        EditText input = new EditText(this);
+        input.setHint("Ej. Radiografía de tórax, Examen de sangre, Lesión dérmica...");
+        input.setPadding(30, 20, 30, 20);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Descripción del Estudio o Imagen")
+                .setMessage("Ingrese notas o datos complementarios para esta imagen:")
+                .setView(input)
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    String nota = input.getText().toString().trim();
+                    if (nota.isEmpty()) {
+                        nota = "Estudio complementario";
+                    }
+                    guardarImagenEnBd(uri, nota);
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void guardarImagenEnBd(Uri uri, String descripcion) {
+        new Thread(() -> {
+            try {
+                File dir = new File(getFilesDir(), "imagenes_pacientes");
+                if (!dir.exists()) dir.mkdirs();
+
+                File destFile = new File(dir, "img_" + System.currentTimeMillis() + ".jpg");
+                try (InputStream in = getContentResolver().openInputStream(uri);
+                     OutputStream out = new FileOutputStream(destFile)) {
+                    byte[] buffer = new byte[8192];
+                    int read;
+                    while ((read = in.read(buffer)) != -1) {
+                        out.write(buffer, 0, read);
+                    }
+                }
+
+                ImagenComplementaria img = new ImagenComplementaria();
+                img.paciente_id = pacienteId;
+                img.ruta_imagen = destFile.getAbsolutePath();
+                img.descripcion_datos = descripcion;
+                img.fecha_registro = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date());
+
+                AppDatabase.obtener(this).imagenComplementariaDao().insertar(img);
+
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Imagen complementaria guardada exitosamente", Toast.LENGTH_SHORT).show();
+                    cargarImagenesComplementarias();
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> Toast.makeText(this, "Error al guardar imagen: " + e.getMessage(), Toast.LENGTH_LONG).show());
+            }
+        }).start();
+    }
+
+    private void eliminarImagenComplementaria(ImagenComplementaria img) {
+        new AlertDialog.Builder(this)
+                .setTitle("Eliminar Imagen")
+                .setMessage("¿Desea eliminar esta imagen complementaria de la ficha?")
+                .setPositiveButton("Eliminar", (dialog, which) -> {
+                    new Thread(() -> {
+                        AppDatabase.obtener(this).imagenComplementariaDao().eliminar(img.id);
+                        if (img.ruta_imagen != null) {
+                            try {
+                                new File(img.ruta_imagen).delete();
+                            } catch (Exception ignored) {}
+                        }
+                        runOnUiThread(() -> {
+                            Toast.makeText(this, "Imagen eliminada", Toast.LENGTH_SHORT).show();
+                            cargarImagenesComplementarias();
+                        });
+                    }).start();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
     private void guardarCambiosFicha() {
         String nombre = editNombre.getText().toString().trim();
         if (nombre.isEmpty()) {
@@ -160,6 +356,63 @@ public class PerfilPacienteActivity extends AppCompatActivity {
                 finish();
             });
         }).start();
+    }
+
+    static class ImagenComplementariaAdapter extends RecyclerView.Adapter<ImagenComplementariaAdapter.ViewHolder> {
+        private final List<ImagenComplementaria> lista;
+        private final OnItemClickListener listener;
+
+        interface OnItemClickListener {
+            void onEliminar(ImagenComplementaria img);
+        }
+
+        ImagenComplementariaAdapter(List<ImagenComplementaria> lista, OnItemClickListener listener) {
+            this.lista = lista;
+            this.listener = listener;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_imagen_complementaria, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            ImagenComplementaria item = lista.get(position);
+            holder.textDescripcion.setText(item.descripcion_datos != null ? item.descripcion_datos : "Estudio sin nota");
+            holder.textFecha.setText("Fecha: " + (item.fecha_registro != null ? item.fecha_registro : "-"));
+
+            if (item.ruta_imagen != null) {
+                Glide.with(holder.itemView.getContext())
+                        .load(new File(item.ruta_imagen))
+                        .into(holder.imgPreview);
+            }
+
+            holder.btnEliminar.setOnClickListener(v -> {
+                if (listener != null) listener.onEliminar(item);
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return lista.size();
+        }
+
+        static class ViewHolder extends RecyclerView.ViewHolder {
+            ImageView imgPreview;
+            TextView textDescripcion, textFecha;
+            ImageButton btnEliminar;
+
+            ViewHolder(View view) {
+                super(view);
+                imgPreview = view.findViewById(R.id.img_complementaria_preview);
+                textDescripcion = view.findViewById(R.id.text_imagen_descripcion);
+                textFecha = view.findViewById(R.id.text_imagen_fecha);
+                btnEliminar = view.findViewById(R.id.btn_eliminar_imagen_comp);
+            }
+        }
     }
 
     @Override
