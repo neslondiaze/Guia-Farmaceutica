@@ -717,7 +717,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:contentDescription="Gestión de Pacientes"
-                            android:src="@drawable/ic_cat_security"
+                            android:src="@drawable/ic_cat_patient"
                             app:tint="#0F4C81" />
 
                         <LinearLayout
