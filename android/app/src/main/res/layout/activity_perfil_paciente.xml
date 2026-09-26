@@ -80,42 +80,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Banner Aviso de Privacidad -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
-                app:cardBackgroundColor="#FEF2F2"
-                app:cardCornerRadius="8dp"
-                app:strokeColor="#FCA5A5"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Aviso de privacidad"
-                        android:textColor="#991B1B"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="En un sistema real, el acceso a datos personales debe protegerse conforme a la normativa sanitaria y de privacidad aplicable."
-                        android:textColor="#B91C1C"
-                        android:textSize="11sp" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
             <!-- Card Datos Identificativos -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
