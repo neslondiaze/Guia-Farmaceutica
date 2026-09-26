@@ -168,7 +168,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Clases Anatómicas"
                             android:src="@drawable/ic_cat_anatomy"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -218,7 +218,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Grupos Terapéuticos"
                             android:src="@drawable/ic_cat_therapy"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -268,7 +268,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Principios Activos"
                             android:src="@drawable/ic_cat_science"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -318,7 +318,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Vías de Administración"
                             android:src="@drawable/ic_cat_route"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -368,7 +368,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Formas Farmacéuticas"
                             android:src="@drawable/ic_cat_form"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -418,7 +418,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Laboratorios"
                             android:src="@drawable/ic_cat_factory"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -468,7 +468,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Seguridad Embarazo"
                             android:src="@drawable/ic_cat_security"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -518,7 +518,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Monografías Clínicas"
                             android:src="@drawable/ic_cat_monography"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -568,7 +568,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Índice Alfabético"
                             android:src="@drawable/ic_cat_alphabet"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -618,7 +618,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Impresión Diagnóstica"
                             android:src="@drawable/ic_cat_monography"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -668,7 +668,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Calculadora de Dosis"
                             android:src="@drawable/ic_pill"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -718,7 +718,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Gestión de Pacientes"
                             android:src="@drawable/ic_cat_patient"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -768,7 +768,7 @@
                             android:layout_height="32dp"
                             android:contentDescription="Configuración"
                             android:src="@drawable/ic_cat_settings"
-                            app:tint="#0F4C81" />
+                            app:tint="@color/verde_farmacia" />
 
                         <LinearLayout
                             android:layout_width="0dp"
