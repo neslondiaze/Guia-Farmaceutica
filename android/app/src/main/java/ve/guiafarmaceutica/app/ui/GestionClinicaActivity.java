@@ -4,11 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
 import java.util.List;
 import ve.guiafarmaceutica.app.R;
 import ve.guiafarmaceutica.app.data.AppDatabase;
@@ -18,9 +24,10 @@ import ve.guiafarmaceutica.app.util.DemoDataHelper;
 
 public class GestionClinicaActivity extends AppCompatActivity {
 
-    private TextView textPacienteNombre, textPacienteSub;
-    private View cardPacienteMaria;
-    private long pacienteMariaId = -1;
+    private RecyclerView recyclerPacientes;
+    private TextView textEmptyPacientes;
+    private PacienteRecienteAdapter adapter;
+    private final List<Paciente> listaPacientes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +42,7 @@ public class GestionClinicaActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        cargarPacienteReciente();
+        cargarPacientesRecientes();
     }
 
     private void setupUI() {
@@ -48,20 +55,16 @@ public class GestionClinicaActivity extends AppCompatActivity {
             textHeaderClinica.setText(settings.getMedicoClinica());
         }
 
-        textPacienteNombre = findViewById(R.id.text_paciente_nombre_dash);
-        textPacienteSub = findViewById(R.id.text_paciente_sub_dash);
-        cardPacienteMaria = findViewById(R.id.card_paciente_maria);
+        recyclerPacientes = findViewById(R.id.recycler_pacientes_recientes);
+        textEmptyPacientes = findViewById(R.id.text_empty_pacientes);
 
-        View.OnClickListener abrirFicha = v -> {
-            if (pacienteMariaId != -1) {
-                Intent intent = new Intent(this, PerfilPacienteActivity.class);
-                intent.putExtra(PerfilPacienteActivity.EXTRA_PACIENTE_ID, pacienteMariaId);
-                startActivity(intent);
-            }
-        };
-
-        findViewById(R.id.btn_ver_ficha_maria).setOnClickListener(abrirFicha);
-        cardPacienteMaria.setOnClickListener(abrirFicha);
+        recyclerPacientes.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new PacienteRecienteAdapter(listaPacientes, p -> {
+            Intent intent = new Intent(this, PerfilPacienteActivity.class);
+            intent.putExtra(PerfilPacienteActivity.EXTRA_PACIENTE_ID, p.id);
+            startActivity(intent);
+        });
+        recyclerPacientes.setAdapter(adapter);
 
         EditText editBuscar = findViewById(R.id.edit_buscar_paciente);
         editBuscar.addTextChangedListener(new TextWatcher() {
@@ -78,17 +81,24 @@ public class GestionClinicaActivity extends AppCompatActivity {
         });
     }
 
-    private void cargarPacienteReciente() {
+    private void cargarPacientesRecientes() {
         new Thread(() -> {
             List<Paciente> lista = AppDatabase.obtener(this).pacienteDao().listarPacientes();
-            if (lista != null && !lista.isEmpty()) {
-                Paciente maria = lista.get(0);
-                pacienteMariaId = maria.id;
-                runOnUiThread(() -> {
-                    textPacienteNombre.setText(maria.nombre_completo);
-                    textPacienteSub.setText("ID " + maria.identificacion + " · Expediente clínico");
-                });
+            List<Paciente> ultimos5 = new ArrayList<>();
+            if (lista != null) {
+                int limit = Math.min(5, lista.size());
+                for (int i = 0; i < limit; i++) {
+                    ultimos5.add(lista.get(i));
+                }
             }
+            runOnUiThread(() -> {
+                listaPacientes.clear();
+                listaPacientes.addAll(ultimos5);
+                adapter.notifyDataSetChanged();
+                if (textEmptyPacientes != null) {
+                    textEmptyPacientes.setVisibility(listaPacientes.isEmpty() ? View.VISIBLE : View.GONE);
+                }
+            });
         }).start();
     }
 
@@ -96,17 +106,80 @@ public class GestionClinicaActivity extends AppCompatActivity {
         new Thread(() -> {
             List<Paciente> resultados = AppDatabase.obtener(this).pacienteDao().buscarPacientes(query);
             runOnUiThread(() -> {
-                if (resultados != null && !resultados.isEmpty()) {
-                    Paciente p = resultados.get(0);
-                    pacienteMariaId = p.id;
-                    textPacienteNombre.setText(p.nombre_completo);
-                    textPacienteSub.setText("ID " + p.identificacion + " · Expediente clínico");
-                    cardPacienteMaria.setVisibility(View.VISIBLE);
-                } else {
-                    cardPacienteMaria.setVisibility(View.GONE);
+                listaPacientes.clear();
+                if (resultados != null) {
+                    int limit = Math.min(10, resultados.size());
+                    for (int i = 0; i < limit; i++) {
+                        listaPacientes.add(resultados.get(i));
+                    }
+                }
+                adapter.notifyDataSetChanged();
+                if (textEmptyPacientes != null) {
+                    textEmptyPacientes.setVisibility(listaPacientes.isEmpty() ? View.VISIBLE : View.GONE);
                 }
             });
         }).start();
+    }
+
+    static class PacienteRecienteAdapter extends RecyclerView.Adapter<PacienteRecienteAdapter.ViewHolder> {
+        private final List<Paciente> pacientes;
+        private final OnItemClickListener listener;
+
+        interface OnItemClickListener {
+            void onItemClick(Paciente p);
+        }
+
+        PacienteRecienteAdapter(List<Paciente> pacientes, OnItemClickListener listener) {
+            this.pacientes = pacientes;
+            this.listener = listener;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_paciente_reciente, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            Paciente p = pacientes.get(position);
+            holder.bind(p, listener);
+        }
+
+        @Override
+        public int getItemCount() {
+            return pacientes.size();
+        }
+
+        static class ViewHolder extends RecyclerView.ViewHolder {
+            TextView avatar, nombre, detalles;
+
+            ViewHolder(View view) {
+                super(view);
+                avatar = view.findViewById(R.id.text_avatar_iniciales);
+                nombre = view.findViewById(R.id.text_paciente_nombre_item);
+                detalles = view.findViewById(R.id.text_paciente_detalles_item);
+            }
+
+            void bind(Paciente p, OnItemClickListener listener) {
+                nombre.setText(p.nombre_completo != null ? p.nombre_completo : "Sin Nombre");
+                String iniciales = "PA";
+                if (p.nombre_completo != null && !p.nombre_completo.trim().isEmpty()) {
+                    String[] parts = p.nombre_completo.trim().split("\\s+");
+                    if (parts.length >= 2) {
+                        iniciales = ("" + parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+                    } else if (parts[0].length() >= 2) {
+                        iniciales = parts[0].substring(0, 2).toUpperCase();
+                    }
+                }
+                avatar.setText(iniciales);
+                detalles.setText("ID: " + (p.identificacion != null ? p.identificacion : "S/I") + " · Edad: " + (p.edad_calculada != null ? p.edad_calculada : "S/I"));
+                itemView.setOnClickListener(v -> {
+                    if (listener != null) listener.onItemClick(p);
+                });
+            }
+        }
     }
 
     @Override

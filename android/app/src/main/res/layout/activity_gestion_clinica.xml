@@ -130,101 +130,32 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Pacientes Recientes -->
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:text="Pacientes recientes (Últimos 5)"
+                android:textColor="#1E293B"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Pacientes recientes"
-                    android:textColor="#1E293B"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/text_empty_pacientes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="No hay pacientes registrados aún."
+                android:textColor="#9E9E9E"
+                android:textSize="13sp"
+                android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/btn_ver_ficha_maria"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:text="Ver ficha"
-                    android:textColor="#0F4C81"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <!-- Tarjeta Paciente María López -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_paciente_maria"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_pacientes_recientes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="1dp"
-                app:strokeColor="#E2E8F0"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:background="@drawable/bg_circle_avatar"
-                        android:gravity="center"
-                        android:text="ML"
-                        android:textColor="#0F4C81"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/text_paciente_nombre_dash"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="María López"
-                            android:textColor="#1E293B"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/text_paciente_sub_dash"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="ID DEMO-10482 · Expediente clínico"
-                            android:textColor="#64748B"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_back_arrow"
-                        android:rotation="180"
-                        app:tint="#94A3B8" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
+                android:nestedScrollingEnabled="false" />
 
         </LinearLayout>
 
