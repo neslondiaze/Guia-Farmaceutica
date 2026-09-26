@@ -18,6 +18,29 @@ import ve.guiafarmaceutica.app.repository.SettingsRepository;
 
 public class ImpresionPdfHelper {
 
+    private static String obtenerIndicacionAsociada(int num, ImpresionDetalle d, String observaciones) {
+        String base = "    Dosis: " + (d.dosificacion != null ? d.dosificacion : "-") + " - " + (d.frecuencia_instrucciones != null ? d.frecuencia_instrucciones : "");
+        if (observaciones != null && !observaciones.isEmpty()) {
+            String prefix1 = num + ".";
+            String prefix2 = num + ")";
+            String prefix3 = num + ":";
+            String prefix4 = num + "-";
+            for (String linea : observaciones.split("\n")) {
+                linea = linea.trim();
+                String encontrada = null;
+                if (linea.startsWith(prefix1)) encontrada = linea.substring(prefix1.length()).trim();
+                else if (linea.startsWith(prefix2)) encontrada = linea.substring(prefix2.length()).trim();
+                else if (linea.startsWith(prefix3)) encontrada = linea.substring(prefix3.length()).trim();
+                else if (linea.startsWith(prefix4)) encontrada = linea.substring(prefix4.length()).trim();
+
+                if (encontrada != null && !encontrada.isEmpty()) {
+                    return "    " + encontrada;
+                }
+            }
+        }
+        return base + (d.duracion_dias != null ? " (Duración: " + d.duracion_dias + ")" : "");
+    }
+
     public static File generarPdfImpresion(Context context, ImpresionDiagnostica impresion, List<ImpresionDetalle> detalles) throws IOException {
         SettingsRepository settings = new SettingsRepository(context);
 
@@ -107,24 +130,11 @@ public class ImpresionPdfHelper {
             paint.setColor(Color.parseColor("#333333"));
             paint.setTextSize(10);
             paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-            String indicacion = "    Dosis: " + d.dosificacion + " - " + d.frecuencia_instrucciones + " (Duración: " + d.duracion_dias + ")";
+            String indicacion = obtenerIndicacionAsociada(num, d, impresion.observaciones);
             canvas.drawText(indicacion, 50, y, paint);
 
             y += 22;
             num++;
-        }
-
-        // Observaciones adicionales
-        if (impresion.observaciones != null && !impresion.observaciones.isEmpty()) {
-            y += 10;
-            paint.setColor(Color.parseColor("#616161"));
-            paint.setTextSize(10);
-            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-            canvas.drawText("RECOMENDACIONES CLÍNICAS ADICIONALES:", 40, y, paint);
-
-            y += 16;
-            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-            canvas.drawText(impresion.observaciones, 40, y, paint);
         }
 
         // 4. Firma y Sello
@@ -354,28 +364,11 @@ public class ImpresionPdfHelper {
             paint.setColor(Color.parseColor("#333333"));
             paint.setTextSize(10);
             paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-            String indicacion = "    Dosis: " + d.dosificacion + " - " + d.frecuencia_instrucciones + " (Duración: " + d.duracion_dias + ")";
+            String indicacion = obtenerIndicacionAsociada(numInd, d, impresion.observaciones);
             canvas2.drawText(indicacion, 50, y, paint);
 
             y += 22;
             numInd++;
-        }
-
-        if (impresion.observaciones != null && !impresion.observaciones.isEmpty()) {
-            y += 15;
-            paint.setColor(Color.parseColor("#0B4F9C"));
-            paint.setTextSize(12);
-            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-            canvas2.drawText("INDICACIONES Y CUIDADOS ADICIONALES:", 40, y, paint);
-
-            y += 18;
-            paint.setColor(Color.parseColor("#333333"));
-            paint.setTextSize(10);
-            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-            for (String linea : impresion.observaciones.split("\n")) {
-                canvas2.drawText(linea, 40, y, paint);
-                y += 18;
-            }
         }
 
         // Pie de página: Firma, Sello y "Lugar del sello"

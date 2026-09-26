@@ -308,7 +308,7 @@ public class CrearImpresionActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             ImpresionDetalle d = listaMedicamentosReferencia.get(position);
-            holder.bind(d);
+            holder.bind(d, position + 1);
         }
 
         @Override
@@ -317,11 +317,12 @@ public class CrearImpresionActivity extends AppCompatActivity {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView nombre, presentacion, concentracion, dosis;
+            TextView numero, nombre, presentacion, concentracion, dosis;
             ImageButton btnEliminar, btnGuia;
 
             ViewHolder(View view) {
                 super(view);
+                numero = view.findViewById(R.id.text_item_numero);
                 nombre = view.findViewById(R.id.text_item_med_nombre);
                 presentacion = view.findViewById(R.id.text_item_presentacion);
                 concentracion = view.findViewById(R.id.text_item_concentracion);
@@ -330,7 +331,10 @@ public class CrearImpresionActivity extends AppCompatActivity {
                 btnGuia = view.findViewById(R.id.btn_ver_guia_medicamento);
             }
 
-            void bind(ImpresionDetalle d) {
+            void bind(ImpresionDetalle d, int num) {
+                if (numero != null) {
+                    numero.setText(String.valueOf(num));
+                }
                 nombre.setText(d.medicamento_nombre);
                 presentacion.setText(d.presentacion != null ? d.presentacion : "-");
                 concentracion.setText(d.concentracion != null ? d.concentracion : "-");
