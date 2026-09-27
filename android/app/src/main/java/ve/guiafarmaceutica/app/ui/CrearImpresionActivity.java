@@ -97,12 +97,13 @@ public class CrearImpresionActivity extends AppCompatActivity {
         editPacienteCedula = editCedulaView;
         editPacienteEdad = findViewById(R.id.edit_paciente_edad);
 
-        PacienteFilterAdapter adapterPacientes = new PacienteFilterAdapter(this, new ArrayList<>());
+        PacienteFilterAdapter adapterNombre = new PacienteFilterAdapter(this, new ArrayList<>(), false);
+        PacienteFilterAdapter adapterCedula = new PacienteFilterAdapter(this, new ArrayList<>(), true);
 
         if (editNombreView != null) {
-            editNombreView.setAdapter(adapterPacientes);
+            editNombreView.setAdapter(adapterNombre);
             editNombreView.setOnItemClickListener((parent, view, position, id) -> {
-                Paciente p = adapterPacientes.getItem(position);
+                Paciente p = adapterNombre.getItem(position);
                 if (p != null) {
                     if (editCedulaView != null) editCedulaView.setText(p.identificacion, false);
                     if (editPacienteEdad != null) editPacienteEdad.setText(p.edad_calculada);
@@ -111,9 +112,9 @@ public class CrearImpresionActivity extends AppCompatActivity {
         }
 
         if (editCedulaView != null) {
-            editCedulaView.setAdapter(adapterPacientes);
+            editCedulaView.setAdapter(adapterCedula);
             editCedulaView.setOnItemClickListener((parent, view, position, id) -> {
-                Paciente p = adapterPacientes.getItem(position);
+                Paciente p = adapterCedula.getItem(position);
                 if (p != null) {
                     if (editNombreView != null) editNombreView.setText(p.nombre_completo, false);
                     if (editPacienteEdad != null) editPacienteEdad.setText(p.edad_calculada);
@@ -124,7 +125,10 @@ public class CrearImpresionActivity extends AppCompatActivity {
         new Thread(() -> {
             List<Paciente> todos = AppDatabase.obtener(this).pacienteDao().listarPacientes();
             if (todos != null) {
-                runOnUiThread(() -> adapterPacientes.actualizarPacientes(todos));
+                runOnUiThread(() -> {
+                    adapterNombre.actualizarPacientes(todos);
+                    adapterCedula.actualizarPacientes(todos);
+                });
             }
         }).start();
 
@@ -495,11 +499,13 @@ public class CrearImpresionActivity extends AppCompatActivity {
     static class PacienteFilterAdapter extends ArrayAdapter<Paciente> {
         private final List<Paciente> allPacientes;
         private List<Paciente> filteredPacientes;
+        private final boolean esSoloCedula;
 
-        public PacienteFilterAdapter(Context context, List<Paciente> pacientes) {
+        public PacienteFilterAdapter(Context context, List<Paciente> pacientes, boolean esSoloCedula) {
             super(context, android.R.layout.simple_dropdown_item_1line, pacientes);
             this.allPacientes = new ArrayList<>(pacientes);
             this.filteredPacientes = new ArrayList<>(pacientes);
+            this.esSoloCedula = esSoloCedula;
         }
 
         public void actualizarPacientes(List<Paciente> pacientes) {
@@ -564,7 +570,8 @@ public class CrearImpresionActivity extends AppCompatActivity {
                 @Override
                 public CharSequence convertResultToString(Object resultValue) {
                     if (resultValue instanceof Paciente) {
-                        return ((Paciente) resultValue).nombre_completo;
+                        Paciente p = (Paciente) resultValue;
+                        return esSoloCedula ? (p.identificacion != null ? p.identificacion : "") : p.nombre_completo;
                     }
                     return super.convertResultToString(resultValue);
                 }
