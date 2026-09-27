@@ -47,8 +47,9 @@ public class FichaActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.ficha_nombre)).setText(nombre);
         ((TextView) findViewById(R.id.ficha_laboratorio)).setText(lab);
 
+        String forma = getIntent().getStringExtra("medicamento_forma");
         View btnCalcularDosis = findViewById(R.id.btn_calcular_dosis);
-        boolean esDosificable = DosificacionHelper.esDosificable("", "", nombre);
+        boolean esDosificable = DosificacionHelper.esDosificable("", forma != null ? forma : "", nombre);
         btnCalcularDosis.setVisibility(esDosificable ? View.VISIBLE : View.GONE);
 
         btnCalcularDosis.setOnClickListener(v -> {
