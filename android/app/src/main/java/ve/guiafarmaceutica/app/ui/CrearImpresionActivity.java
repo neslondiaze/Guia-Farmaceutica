@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -38,7 +40,8 @@ public class CrearImpresionActivity extends AppCompatActivity {
     public static final String EXTRA_MED_NOMBRE = "extra_med_nombre";
     public static final String EXTRA_DOSIS = "extra_dosis";
 
-    private TextInputEditText editPacienteNombre, editPacienteCedula, editPacienteEdad, editPacienteDiagnostico;
+    private TextInputEditText editPacienteNombre, editPacienteCedula, editPacienteEdad;
+    private AutoCompleteTextView editPacienteDiagnostico;
     private TextInputEditText editMedNombre, editPresentacion, editConcentracion, editDosis, editFrecuencia, editDuracion, editObservaciones;
     private TextView textEmptyMedicamentosReferencia;
     private View cardFormAgregar;
@@ -87,6 +90,30 @@ public class CrearImpresionActivity extends AppCompatActivity {
         editPacienteCedula = findViewById(R.id.edit_paciente_cedula);
         editPacienteEdad = findViewById(R.id.edit_paciente_edad);
         editPacienteDiagnostico = findViewById(R.id.edit_paciente_diagnostico);
+
+        if (editPacienteDiagnostico != null) {
+            String[] patologiasBase = new String[]{
+                "Diabetes Mellitus Tipo 1",
+                "Diabetes Mellitus Tipo 2",
+                "Hipertensión Arterial Sistémica",
+                "Faringoamigdalitis Aguda Bacteriana",
+                "Asma Bronquial / Crisis Asmática",
+                "Gastroenteritis Aguda / Deshidratación",
+                "Cefalea Tensional / Migraña",
+                "Gastritis Aguda / Reflujo Gastroesofágico",
+                "Rinitis Alérgica / Síndrome Gripal",
+                "Neumonía Adquirida en la Comunidad",
+                "Infección del Tracto Urinario (ITU)",
+                "Dermatitis de Contacto / Eccema",
+                "Infección Fúngica / Micosis Cutánea",
+                "Osteoartritis / Lumbalgia Aguda",
+                "Fiebre Alta / Cuadro Febril"
+            };
+            ArrayAdapter<String> adapterPatologias = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, patologiasBase);
+            editPacienteDiagnostico.setAdapter(adapterPatologias);
+
+            editPacienteDiagnostico.setOnItemClickListener((parent, view, position, id) -> evaluarConIA());
+        }
 
         editMedNombre = findViewById(R.id.edit_impresion_med_nombre);
         editPresentacion = findViewById(R.id.edit_impresion_presentacion);
