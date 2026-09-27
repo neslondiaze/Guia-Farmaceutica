@@ -1,5 +1,6 @@
 package ve.guiafarmaceutica.app.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Filter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,8 +22,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputEditText;
 import java.io.File;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -92,7 +96,7 @@ public class CrearImpresionActivity extends AppCompatActivity {
         editPacienteDiagnostico = findViewById(R.id.edit_paciente_diagnostico);
 
         if (editPacienteDiagnostico != null) {
-            String[] patologiasBase = new String[]{
+            List<String> patologiasBase = Arrays.asList(
                 "Diabetes Mellitus Tipo 1",
                 "Diabetes Mellitus Tipo 2",
                 "Hipertensión Arterial Sistémica",
@@ -108,8 +112,8 @@ public class CrearImpresionActivity extends AppCompatActivity {
                 "Infección Fúngica / Micosis Cutánea",
                 "Osteoartritis / Lumbalgia Aguda",
                 "Fiebre Alta / Cuadro Febril"
-            };
-            ArrayAdapter<String> adapterPatologias = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, patologiasBase);
+            );
+            PatologiaFilterAdapter adapterPatologias = new PatologiaFilterAdapter(this, patologiasBase);
             editPacienteDiagnostico.setAdapter(adapterPatologias);
 
             editPacienteDiagnostico.setOnItemClickListener((parent, view, position, id) -> evaluarConIA());
@@ -450,6 +454,74 @@ public class CrearImpresionActivity extends AppCompatActivity {
                 presentacion = view.findViewById(R.id.text_sugerencia_presentacion);
                 btnAgregar = view.findViewById(R.id.btn_sugerencia_agregar);
             }
+        }
+    }
+
+    static class PatologiaFilterAdapter extends ArrayAdapter<String> {
+        private final List<String> origList;
+        private List<String> filteredList;
+
+        public PatologiaFilterAdapter(Context context, List<String> objects) {
+            super(context, android.R.layout.simple_dropdown_item_1line, objects);
+            this.origList = new ArrayList<>(objects);
+            this.filteredList = new ArrayList<>(objects);
+        }
+
+        @Override
+        public int getCount() {
+            return filteredList.size();
+        }
+
+        @Override
+        public String getItem(int position) {
+            return filteredList.get(position);
+        }
+
+        @NonNull
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults results = new FilterResults();
+                    if (constraint == null || constraint.length() == 0) {
+                        results.values = origList;
+                        results.count = origList.size();
+                    } else {
+                        String query = normalizarTexto(constraint.toString());
+                        List<String> match = new ArrayList<>();
+                        for (String item : origList) {
+                            if (normalizarTexto(item).contains(query)) {
+                                match.add(item);
+                            }
+                        }
+                        results.values = match;
+                        results.count = match.size();
+                    }
+                    return results;
+                }
+
+                @SuppressWarnings("unchecked")
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    if (results != null && results.values != null) {
+                        filteredList = (List<String>) results.values;
+                    } else {
+                        filteredList = new ArrayList<>();
+                    }
+                    if (results != null && results.count > 0) {
+                        notifyDataSetChanged();
+                    } else {
+                        notifyDataSetInvalidated();
+                    }
+                }
+            };
+        }
+
+        private String normalizarTexto(String input) {
+            if (input == null) return "";
+            String nfdNormalized = Normalizer.normalize(input.toLowerCase(Locale.getDefault()), Normalizer.Form.NFD);
+            return nfdNormalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
         }
     }
 
