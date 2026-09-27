@@ -44,7 +44,8 @@ public class CrearImpresionActivity extends AppCompatActivity {
     public static final String EXTRA_MED_NOMBRE = "extra_med_nombre";
     public static final String EXTRA_DOSIS = "extra_dosis";
 
-    private TextInputEditText editPacienteNombre, editPacienteCedula, editPacienteEdad;
+    private AutoCompleteTextView editPacienteNombre, editPacienteCedula;
+    private TextInputEditText editPacienteEdad;
     private AutoCompleteTextView editPacienteDiagnostico;
     private TextInputEditText editMedNombre, editPresentacion, editConcentracion, editDosis, editFrecuencia, editDuracion, editObservaciones;
     private TextView textEmptyMedicamentosReferencia;
@@ -90,9 +91,36 @@ public class CrearImpresionActivity extends AppCompatActivity {
         ImageButton btnBack = findViewById(R.id.btn_back);
         btnBack.setOnClickListener(v -> onBackPressed());
 
-        editPacienteNombre = findViewById(R.id.edit_paciente_nombre);
-        editPacienteCedula = findViewById(R.id.edit_paciente_cedula);
+        AutoCompleteTextView editNombreView = findViewById(R.id.edit_paciente_nombre);
+        AutoCompleteTextView editCedulaView = findViewById(R.id.edit_paciente_cedula);
+        editPacienteNombre = editNombreView;
+        editPacienteCedula = editCedulaView;
         editPacienteEdad = findViewById(R.id.edit_paciente_edad);
+
+        if (editNombreView != null) {
+            PacienteFilterAdapter adapterNombre = new PacienteFilterAdapter(this, new ArrayList<>());
+            editNombreView.setAdapter(adapterNombre);
+            editNombreView.setOnItemClickListener((parent, view, position, id) -> {
+                Paciente p = adapterNombre.getItem(position);
+                if (p != null) {
+                    if (editCedulaView != null) editCedulaView.setText(p.identificacion, false);
+                    if (editPacienteEdad != null) editPacienteEdad.setText(p.edad_calculada);
+                }
+            });
+        }
+
+        if (editCedulaView != null) {
+            PacienteFilterAdapter adapterCedula = new PacienteFilterAdapter(this, new ArrayList<>());
+            editCedulaView.setAdapter(adapterCedula);
+            editCedulaView.setOnItemClickListener((parent, view, position, id) -> {
+                Paciente p = adapterCedula.getItem(position);
+                if (p != null) {
+                    if (editNombreView != null) editNombreView.setText(p.nombre_completo, false);
+                    if (editPacienteEdad != null) editPacienteEdad.setText(p.edad_calculada);
+                }
+            });
+        }
+
         editPacienteDiagnostico = findViewById(R.id.edit_paciente_diagnostico);
 
         if (editPacienteDiagnostico != null) {
@@ -454,6 +482,81 @@ public class CrearImpresionActivity extends AppCompatActivity {
                 presentacion = view.findViewById(R.id.text_sugerencia_presentacion);
                 btnAgregar = view.findViewById(R.id.btn_sugerencia_agregar);
             }
+        }
+    }
+
+    static class PacienteFilterAdapter extends ArrayAdapter<Paciente> {
+        private List<Paciente> listaPacientes;
+
+        public PacienteFilterAdapter(Context context, List<Paciente> pacientes) {
+            super(context, android.R.layout.simple_dropdown_item_1line, pacientes);
+            this.listaPacientes = new ArrayList<>(pacientes);
+        }
+
+        @Override
+        public int getCount() {
+            return listaPacientes.size();
+        }
+
+        @Override
+        public Paciente getItem(int position) {
+            return listaPacientes.get(position);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_dropdown_item_1line, parent, false);
+            }
+            TextView tv = convertView.findViewById(android.R.id.text1);
+            Paciente p = getItem(position);
+            if (p != null) {
+                tv.setText(p.nombre_completo + " (" + (p.identificacion != null ? p.identificacion : "S/I") + ")");
+            }
+            return convertView;
+        }
+
+        @NonNull
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults results = new FilterResults();
+                    if (constraint != null && constraint.length() > 0) {
+                        String query = constraint.toString();
+                        List<Paciente> encontrados = AppDatabase.obtener(getContext()).pacienteDao().buscarPacientes(query);
+                        results.values = encontrados;
+                        results.count = encontrados != null ? encontrados.size() : 0;
+                    } else {
+                        List<Paciente> todos = AppDatabase.obtener(getContext()).pacienteDao().listarPacientes();
+                        results.values = todos;
+                        results.count = todos != null ? todos.size() : 0;
+                    }
+                    return results;
+                }
+
+                @SuppressWarnings("unchecked")
+                @Override
+                public CharSequence convertResultToString(Object resultValue) {
+                    if (resultValue instanceof Paciente) {
+                        return ((Paciente) resultValue).nombre_completo;
+                    }
+                    return super.convertResultToString(resultValue);
+                }
+
+                @SuppressWarnings("unchecked")
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    if (results != null && results.values != null) {
+                        listaPacientes = (List<Paciente>) results.values;
+                        notifyDataSetChanged();
+                    } else {
+                        notifyDataSetInvalidated();
+                    }
+                }
+            };
         }
     }
 

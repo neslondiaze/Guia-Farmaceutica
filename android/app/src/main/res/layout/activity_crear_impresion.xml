@@ -93,15 +93,17 @@
                         android:textStyle="bold" />
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:hint="Nombre y Apellidos del Paciente">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
                             android:id="@+id/edit_paciente_nombre"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:completionThreshold="1" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
@@ -111,6 +113,7 @@
                         android:orientation="horizontal">
 
                         <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
@@ -118,10 +121,11 @@
                             android:layout_weight="1"
                             android:hint="Cédula / ID">
 
-                            <com.google.android.material.textfield.TextInputEditText
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
                                 android:id="@+id/edit_paciente_cedula"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:completionThreshold="1" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
