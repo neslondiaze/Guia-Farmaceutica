@@ -97,11 +97,12 @@ public class CrearImpresionActivity extends AppCompatActivity {
         editPacienteCedula = editCedulaView;
         editPacienteEdad = findViewById(R.id.edit_paciente_edad);
 
+        PacienteFilterAdapter adapterPacientes = new PacienteFilterAdapter(this, new ArrayList<>());
+
         if (editNombreView != null) {
-            PacienteFilterAdapter adapterNombre = new PacienteFilterAdapter(this, new ArrayList<>());
-            editNombreView.setAdapter(adapterNombre);
+            editNombreView.setAdapter(adapterPacientes);
             editNombreView.setOnItemClickListener((parent, view, position, id) -> {
-                Paciente p = adapterNombre.getItem(position);
+                Paciente p = adapterPacientes.getItem(position);
                 if (p != null) {
                     if (editCedulaView != null) editCedulaView.setText(p.identificacion, false);
                     if (editPacienteEdad != null) editPacienteEdad.setText(p.edad_calculada);
@@ -110,16 +111,22 @@ public class CrearImpresionActivity extends AppCompatActivity {
         }
 
         if (editCedulaView != null) {
-            PacienteFilterAdapter adapterCedula = new PacienteFilterAdapter(this, new ArrayList<>());
-            editCedulaView.setAdapter(adapterCedula);
+            editCedulaView.setAdapter(adapterPacientes);
             editCedulaView.setOnItemClickListener((parent, view, position, id) -> {
-                Paciente p = adapterCedula.getItem(position);
+                Paciente p = adapterPacientes.getItem(position);
                 if (p != null) {
                     if (editNombreView != null) editNombreView.setText(p.nombre_completo, false);
                     if (editPacienteEdad != null) editPacienteEdad.setText(p.edad_calculada);
                 }
             });
         }
+
+        new Thread(() -> {
+            List<Paciente> todos = AppDatabase.obtener(this).pacienteDao().listarPacientes();
+            if (todos != null) {
+                runOnUiThread(() -> adapterPacientes.actualizarPacientes(todos));
+            }
+        }).start();
 
         editPacienteDiagnostico = findViewById(R.id.edit_paciente_diagnostico);
 
@@ -486,21 +493,32 @@ public class CrearImpresionActivity extends AppCompatActivity {
     }
 
     static class PacienteFilterAdapter extends ArrayAdapter<Paciente> {
-        private List<Paciente> listaPacientes;
+        private final List<Paciente> allPacientes;
+        private List<Paciente> filteredPacientes;
 
         public PacienteFilterAdapter(Context context, List<Paciente> pacientes) {
             super(context, android.R.layout.simple_dropdown_item_1line, pacientes);
-            this.listaPacientes = new ArrayList<>(pacientes);
+            this.allPacientes = new ArrayList<>(pacientes);
+            this.filteredPacientes = new ArrayList<>(pacientes);
+        }
+
+        public void actualizarPacientes(List<Paciente> pacientes) {
+            this.allPacientes.clear();
+            if (pacientes != null) {
+                this.allPacientes.addAll(pacientes);
+            }
+            this.filteredPacientes = new ArrayList<>(this.allPacientes);
+            notifyDataSetChanged();
         }
 
         @Override
         public int getCount() {
-            return listaPacientes.size();
+            return filteredPacientes.size();
         }
 
         @Override
         public Paciente getItem(int position) {
-            return listaPacientes.get(position);
+            return filteredPacientes.get(position);
         }
 
         @NonNull
@@ -524,16 +542,21 @@ public class CrearImpresionActivity extends AppCompatActivity {
                 @Override
                 protected FilterResults performFiltering(CharSequence constraint) {
                     FilterResults results = new FilterResults();
-                    if (constraint != null && constraint.length() > 0) {
-                        String query = constraint.toString();
-                        List<Paciente> encontrados = AppDatabase.obtener(getContext()).pacienteDao().buscarPacientes(query);
-                        results.values = encontrados;
-                        results.count = encontrados != null ? encontrados.size() : 0;
+                    List<Paciente> match = new ArrayList<>();
+                    if (constraint == null || constraint.length() == 0) {
+                        match.addAll(allPacientes);
                     } else {
-                        List<Paciente> todos = AppDatabase.obtener(getContext()).pacienteDao().listarPacientes();
-                        results.values = todos;
-                        results.count = todos != null ? todos.size() : 0;
+                        String query = normalizar(constraint.toString());
+                        for (Paciente p : allPacientes) {
+                            String nom = normalizar(p.nombre_completo);
+                            String id = normalizar(p.identificacion);
+                            if (nom.contains(query) || id.contains(query)) {
+                                match.add(p);
+                            }
+                        }
                     }
+                    results.values = match;
+                    results.count = match.size();
                     return results;
                 }
 
@@ -550,13 +573,23 @@ public class CrearImpresionActivity extends AppCompatActivity {
                 @Override
                 protected void publishResults(CharSequence constraint, FilterResults results) {
                     if (results != null && results.values != null) {
-                        listaPacientes = (List<Paciente>) results.values;
+                        filteredPacientes = (List<Paciente>) results.values;
+                    } else {
+                        filteredPacientes = new ArrayList<>();
+                    }
+                    if (results != null && results.count > 0) {
                         notifyDataSetChanged();
                     } else {
                         notifyDataSetInvalidated();
                     }
                 }
             };
+        }
+
+        private String normalizar(String text) {
+            if (text == null) return "";
+            String nfd = Normalizer.normalize(text.toLowerCase(Locale.getDefault()), Normalizer.Form.NFD);
+            return nfd.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
         }
     }
 
