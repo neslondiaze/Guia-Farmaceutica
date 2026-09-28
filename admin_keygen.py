@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
 Script de Administración - Generador de Licencias Offline para Guía Farmacéutica Venezuela.
-Utiliza la Llave Privada RSA embebida para firmar digitalmente cualquier ANDROID_ID de cliente.
+Lee automáticamente la Llave Pública desde SecurityManager.java y valida el par criptográfico.
 """
 
 import base64
+import re
+import os
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization, hashes
 
@@ -38,16 +40,42 @@ ZEwul6RdAUACsCYyTw2oRZ+0XUo7JovanS/dVr7janSUmvTV8RrLvwectLR16Ew4
 Pap09acap9nqnC/yR9nVHEA=
 -----END PRIVATE KEY-----"""
 
+def validar_con_security_manager():
+    sec_path = os.path.join("android", "app", "src", "main", "java", "ve", "guiafarmaceutica", "app", "util", "SecurityManager.java")
+    if not os.path.exists(sec_path):
+        print(f"[!] Advertencia: No se encontró {sec_path}")
+        return
+
+    with open(sec_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    match = re.search(r'PUBLIC_KEY_BASE64\s*=\s*"([^"]+)"', content)
+    if not match:
+        print("[!] Advertencia: No se pudo extraer PUBLIC_KEY_BASE64 de SecurityManager.java")
+        return
+
+    app_pub_b64 = match.group(1)
+
+    private_key = serialization.load_pem_private_key(PRIVATE_KEY_PEM.encode('utf-8'), password=None)
+    pub_der = private_key.public_key().public_bytes(
+        encoding=serialization.Encoding.DER,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+    script_pub_b64 = base64.b64encode(pub_der).decode('utf-8')
+
+    if app_pub_b64 == script_pub_b64:
+        print("[✔] Validación Criptográfica Exitosa: La Llave Pública en SecurityManager.java coincide 100% con la Llave Privada del script.")
+    else:
+        print("[❌] Error de Coincidencia: La Llave Pública en SecurityManager.java DIFERE de la Llave Privada de este script.")
+
 def main():
     print("==================================================")
     print("  GUÍA FARMACÉUTICA VENEZUELA - ADMIN KEYGEN     ")
     print("==================================================")
 
-    # Cargar llave privada
-    private_key = serialization.load_pem_private_key(
-        PRIVATE_KEY_PEM.encode('utf-8'),
-        password=None
-    )
+    validar_con_security_manager()
+
+    private_key = serialization.load_pem_private_key(PRIVATE_KEY_PEM.encode('utf-8'), password=None)
 
     while True:
         android_id = input("\nIntroduce el ANDROID_ID del cliente (ej. 068d30d287e15460) o 'salir': ").strip()
@@ -55,7 +83,6 @@ def main():
             print("Saliendo del generador. ¡Hasta luego!")
             break
 
-        # Firmar digitalmente el ANDROID_ID con la Llave Privada RSA
         signature = private_key.sign(
             android_id.encode('utf-8'),
             padding.PKCS1v15(),
