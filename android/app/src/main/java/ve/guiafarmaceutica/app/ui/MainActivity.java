@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import ve.guiafarmaceutica.app.R;
 import ve.guiafarmaceutica.app.data.AppDatabase;
-import ve.guiafarmaceutica.app.util.DeviceBindingManager;
+import ve.guiafarmaceutica.app.util.SecurityManager;
 import ve.guiafarmaceutica.app.viewmodel.CategoryViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,8 +24,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!DeviceBindingManager.esDispositivoAutorizado(this)) {
-            startActivity(new Intent(this, LicenseLockActivity.class));
+        if (!SecurityManager.yaEstaActivado(this)) {
+            startActivity(new Intent(this, ActivationActivity.class));
             finish();
             return;
         }
