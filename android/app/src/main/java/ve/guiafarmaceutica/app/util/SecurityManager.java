@@ -20,7 +20,7 @@ public class SecurityManager {
     /**
      * Si es true, omite la validación criptográfica (útil para desarrollo/pruebas).
      */
-    public static final boolean MODO_DESARROLLO = true;
+    public static final boolean MODO_DESARROLLO = false;
 
     public static boolean verificarLicenciaOffline(String licenciaIngresadaBase64, Context context) {
         if (MODO_DESARROLLO) {
