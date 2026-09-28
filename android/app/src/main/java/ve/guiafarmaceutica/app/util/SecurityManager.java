@@ -15,7 +15,7 @@ public class SecurityManager {
      * Llave Pública RSA (X.509 en formato Base64) generada por el administrador.
      */
     public static final String PUBLIC_KEY_BASE64 = 
-        "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2CA7Md729GXSRXQl9q1pA06x3us7bX+EXp2d4YilRVvpQlQIiALyo94WKVu7iOXD7yda+1L+nbghUUSdrPnoB4cPVFbsPBPstmjYfVi6QiLmQZjWKm5S6Z9r1yByNHocqV6PftBLrLGvlSATZvI73GtSMAcSUYme3wj0A1jNSLlpaP0zLVfBaJOCl3NjBW1bGgCFmAJgzzPMkl4ozTXukz8MwJxTqQw8YJR1ancCkiK5pDYjVQb92CCLJsxLklAdwMybZdOp/t9RoBp0iUBo7GTm/Dns5QtrSQ5gvMsyTlRSW4Ww/AOuhoU7Mk42KmT86Ut/CCISHfxOFxdnxtTlsQIDAQAB";
+        "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsHXBxgXnuPrLSb+A8oHi3B+kFyCigL3YEdaoId2z73VNmBCdEPywr0k7jXRqilHmCsMVtXybrJ/4XRp6b2QIqxLNNjCwMMbyPi4l5dybbIHOASO6zr8ABsoiakSaXPveapDFi7SQysWjfC0jkWgBl9nz7kpAyPXwikwiG7giA+76s84D7FFOIP9GEPJwtZUoFGKkuVSxZpPuwQ8LiEWdey9grIT4h+CyBABx3t0uY1KxxohrvB3vO2Jw3ui3QN8KDm6Oa3x0t/FUJWmQFv5ScbjwBsQGdFq82+EOfTJesICYB3xBwFohQdOMPG5ktiVI0xyf8GhC9fRlDDoJEIFPIQIDAQAB";
 
     /**
      * Si es true, omite la validación criptográfica (útil para desarrollo/pruebas).
